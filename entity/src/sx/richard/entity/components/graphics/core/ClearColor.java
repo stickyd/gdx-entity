@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.GL20;
  * @author Richard Taylor */
 public class ClearColor extends ComponentAdapter<ClearColor> {
 	
-	public float r, g, b, a = 1;
+	public float r = 0.2f, g = 0.2f, b = 0.2f, a = 1;
 	
 	@Override
 	public Component<ClearColor> copy () {

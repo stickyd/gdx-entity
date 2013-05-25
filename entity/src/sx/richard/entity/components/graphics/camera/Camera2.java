@@ -7,6 +7,7 @@ import sx.richard.entity.components.Transform2;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Matrix4;
 
 /** A 2D orthographic camera, requires a {@link Transform2}
  * @author Richard Taylor */
@@ -33,6 +34,11 @@ public class Camera2 extends ComponentAdapter<Camera2> {
 		return component;
 	}
 	
+	/** @return the combined projection/view matrix */
+	public Matrix4 getCombinedMatrix () {
+		return camera.combined;
+	}
+	
 	@Override
 	public Class<?>[] getDependencies () {
 		return new Class<?>[] { Transform2.class };
@@ -41,6 +47,16 @@ public class Camera2 extends ComponentAdapter<Camera2> {
 	/** @return the viewport height */
 	public float getHeight () {
 		return camera.viewportHeight;
+	}
+	
+	/** @return the cameras projection matrix */
+	public Matrix4 getProjectionMatrix () {
+		return camera.projection;
+	}
+	
+	/** @return the view matrix */
+	public Matrix4 getViewMatrix () {
+		return camera.view;
 	}
 	
 	/** @return the viewport width */
@@ -55,8 +71,13 @@ public class Camera2 extends ComponentAdapter<Camera2> {
 		camera.viewportHeight = height;
 	}
 	
+	/** Updates the camera matrices */
+	public void update () {
+		camera.update(true);
+	}
+	
 	@Override
 	public void update (float delta) {
-		camera.update();
+		update();
 	}
 }

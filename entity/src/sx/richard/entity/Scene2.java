@@ -28,6 +28,8 @@ public class Scene2 implements Scene<Camera2> {
 	@Override
 	public void render (Engine engine, GL20 gl) {
 		Render render = engine.getRender();
+		camera.update();
+		render.spriteBatch.setProjectionMatrix(camera.getCombinedMatrix());
 		render.begin();
 		for (Entity entity : world.getEntities()) {
 			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
