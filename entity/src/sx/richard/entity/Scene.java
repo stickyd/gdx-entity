@@ -16,6 +16,9 @@ public interface Scene<T extends Component<?>> {
 	/** Renders the scene */
 	public void render (Engine engine, GL20 gl);
 	
+	/** Renders the debug scene */
+	public void renderDebug (Engine engine, GL20 gl);
+	
 	/** Sets the active
 	 * @param camera the {@link Camera} */
 	public void setCamera (T camera);

@@ -4,6 +4,7 @@ package sx.richard.entity.components.graphics.camera;
 import sx.richard.entity.Component;
 import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.components.Transform2;
+import sx.richard.entity.components.editor.Debug;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -69,6 +70,11 @@ public class Camera2 extends ComponentAdapter<Camera2> {
 	public void setViewport (float width, float height) {
 		camera.viewportWidth = width;
 		camera.viewportHeight = height;
+	}
+	
+	@Override
+	public void started () {
+		get(Debug.class).render = false;
 	}
 	
 	/** Updates the camera matrices */

@@ -7,12 +7,13 @@ import java.util.List;
 import sx.richard.entity.components.RenderLayer;
 import sx.richard.entity.components.Transform2;
 import sx.richard.entity.components.UpdateLayer;
+import sx.richard.entity.components.editor.Debug;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
-/** A basic entity; contains a {@link Transform2}, {@link UpdateLayer} and
- * {@link RenderLayer}
+/** A basic entity; contains a {@link Transform2}, {@link UpdateLayer},
+ * {@link RenderLayer} and {@link Debug}
  * @author Richard Taylor */
 public final class Entity implements EntityListener {
 	
@@ -32,6 +33,7 @@ public final class Entity implements EntityListener {
 		add(new Transform2());
 		add(new UpdateLayer());
 		add(new RenderLayer());
+		add(new Debug());
 	}
 	
 	/** Creates an empty Entity
