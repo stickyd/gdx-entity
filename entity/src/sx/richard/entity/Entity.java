@@ -8,6 +8,7 @@ import sx.richard.entity.components.RenderLayer;
 import sx.richard.entity.components.Transform2;
 import sx.richard.entity.components.UpdateLayer;
 import sx.richard.entity.components.editor.Debug;
+import sx.richard.eventbus.EventBus;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -20,6 +21,7 @@ public final class Entity implements EntityListener {
 	private final ObjectMap<Class<? extends Component<?>>, Integer> componentIndices;
 	private final ObjectMap<Class<? extends Component<?>>, Component<?>> components;
 	private final Array<Class<? extends Component<?>>> componentTypes;
+	private final EventBus eventBus;
 	
 	private String id;
 	
@@ -30,6 +32,7 @@ public final class Entity implements EntityListener {
 		componentIndices = new ObjectMap<Class<? extends Component<?>>, Integer>();
 		componentTypes = new Array<Class<? extends Component<?>>>();
 		listeners = new ArrayList<EntityListener>();
+		eventBus = new EventBus();
 		add(new Transform2());
 		add(new UpdateLayer());
 		add(new RenderLayer());
@@ -112,6 +115,11 @@ public final class Entity implements EntityListener {
 		for (int i = 0, n = listeners.size(); i < n; i++) {
 			listeners.get(i).entityIdChanged(this, previousId);
 		}
+	}
+	
+	/** @return the {@link EventBus} */
+	public EventBus events () {
+		return eventBus;
 	}
 	
 	/** Gets the component of a particular type

@@ -28,8 +28,11 @@ public final class World implements WorldListener, EntityListener {
 		String id = entity.getId();
 		if (has(id))
 			throw new IllegalStateException("An entity with this Id already exists");
-		entities.put(id, entity);
+		if (entity.getWorld() != null)
+			throw new IllegalStateException("This entity is already added to a world");
+		entity.setWorld(this);
 		entity.addListener(this);
+		entities.put(id, entity);
 		entityAdded(this, entity);
 		entityArray.add(entity);
 	}
@@ -106,9 +109,10 @@ public final class World implements WorldListener, EntityListener {
 	public void remove (Entity entity) {
 		String id = entity.getId();
 		if (entities.containsKey(id)) {
+			entity.removeListener(this);
+			entity.setWorld(null);
 			entities.remove(id);
 			entityArray.removeValue(entity, true);
-			entity.removeListener(this);
 			entityRemoved(this, entity);
 		}
 	}
