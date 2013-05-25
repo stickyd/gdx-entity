@@ -1,6 +1,7 @@
 
 package sx.richard.entity.test;
 
+import sx.richard.entity.Asset;
 import sx.richard.entity.Component;
 import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.Engine;
@@ -11,14 +12,16 @@ import sx.richard.entity.World;
 import sx.richard.entity.components.Transform2;
 import sx.richard.entity.components.graphics.camera.Camera2;
 import sx.richard.entity.components.graphics.core.ClearColor;
+import sx.richard.entity.components.graphics.gfx2.DrawTexture;
 import sx.richard.entity.editor.Editable;
-import sx.richard.entity.executors.RenderComponents;
-import sx.richard.entity.executors.SortRenderLayer;
-import sx.richard.entity.executors.SortUpdateLayer;
-import sx.richard.entity.executors.UpdateScene;
+import sx.richard.entity.enginetasks.RenderComponents;
+import sx.richard.entity.enginetasks.SortRenderLayer;
+import sx.richard.entity.enginetasks.SortUpdateLayer;
+import sx.richard.entity.enginetasks.UpdateScene;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 
 public class Main extends ApplicationAdapter {
@@ -41,7 +44,9 @@ public class Main extends ApplicationAdapter {
 		}
 		
 		@Override
-		public void update (float delta) {}
+		public void update (float delta) {
+			get(Transform2.class).rotate(180f * delta);
+		}
 		
 	}
 	
@@ -88,6 +93,12 @@ public class Main extends ApplicationAdapter {
 		viewer.add(new Transform2());
 		viewer.add(stareAt);
 		
+		Asset arrow = new Asset("arrow.png", Texture.class);
+		
+		DrawTexture drawTexture = new DrawTexture(arrow);
+		
+		viewer.add(drawTexture);
+		
 		world.add(target);
 		world.add(viewer);
 		
@@ -95,6 +106,9 @@ public class Main extends ApplicationAdapter {
 		Array<Entity> invalidEntities = world.getInvalidEntities();
 		if (invalidEntities.size > 0) {
 			System.out.println("invalid entites! size=" + invalidEntities.size);
+			for (Entity entity : invalidEntities) {
+				System.out.println("\tinvalid entity=" + entity);
+			}
 		}
 		
 	}

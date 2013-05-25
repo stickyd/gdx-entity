@@ -24,6 +24,11 @@ public class ClearColor extends ComponentAdapter<ClearColor> {
 	}
 	
 	@Override
+	public Class<?>[] getDependencies () {
+		return null;
+	}
+	
+	@Override
 	public void render (GL20 gl, Render render) {
 		gl.glClearColor(r, g, b, a);
 		gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

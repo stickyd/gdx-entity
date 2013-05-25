@@ -10,14 +10,24 @@ import com.badlogic.gdx.utils.OrderedMap;
  * @author Richard Taylor */
 public final class Engine implements WorldListener {
 	
+	private static AssetManager assetManager;
+	
+	/** @return the {@link AssetManager} */
+	public static AssetManager getAssetManager () {
+		return assetManager;
+	}
+	
+	private final AssetCollection assets;
 	private final Array<EngineTask> engineTasks;
 	private final Render render;
-	private Scene scene;
+	private Scene<?> scene;
 	
 	{
 		SpriteBatch spriteBatch = new SpriteBatch();
 		render = new Render(spriteBatch);
 		engineTasks = new Array<EngineTask>();
+		assets = new AssetCollection();
+		assetManager = new AssetManager();
 	}
 	
 	// These warnings are safe
@@ -44,6 +54,11 @@ public final class Engine implements WorldListener {
 		}
 	}
 	
+	/** @return the {@link AssetCollection} */
+	public AssetCollection getAssets () {
+		return assets;
+	}
+	
 	/** @return the {@link EngineTask}s */
 	public Array<EngineTask> getEngineTasks () {
 		return new Array<EngineTask>(engineTasks);
@@ -55,7 +70,7 @@ public final class Engine implements WorldListener {
 	}
 	
 	/** @return the {@link Scene} */
-	public Scene getScene () {
+	public Scene<?> getScene () {
 		return scene;
 	}
 	
@@ -74,7 +89,7 @@ public final class Engine implements WorldListener {
 	}
 	
 	/** @param scene the {@link Scene} to set, must not be <code>null</code> */
-	public void setScene (Scene scene) {
+	public void setScene (Scene<?> scene) {
 		if (scene == null)
 			throw new NullPointerException("Scene must not be null");
 		this.scene = scene;

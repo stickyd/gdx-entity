@@ -1,19 +1,17 @@
 
 package sx.richard.entity;
 
+import sx.richard.entity.components.Transform2;
+
 import com.badlogic.gdx.graphics.GL20;
 
-/** A basic {@link Component} adapter, does not provide a copy method
+/** A basic {@link Component} adapter, does not provide a copy method and
+ * requires the {@link Transform2}
  * @author Richard Taylor */
 public abstract class ComponentAdapter<T extends Component<T>> extends Component<T> {
 	
 	@Override
 	public void added () {}
-	
-	@Override
-	public Class<?>[] getDependencies () {
-		return null;
-	}
 	
 	@Override
 	public void removed () {}

@@ -23,4 +23,7 @@ public @interface Editable {
 	/** @return whether this field should appear in the editor, but be read-only */
 	public boolean readOnly() default false;
 	
+	/** @return the type this points to, usage may vary */
+	public Class<?> type() default Object.class;
+	
 }

@@ -2,14 +2,15 @@
 package sx.richard.entity.components;
 
 import sx.richard.entity.Component;
-import sx.richard.entity.ComponentAdapter;
+import sx.richard.entity.Render;
 
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 /** A basic component with 2D position/orientation transform
  * @author Richard Taylor */
-public final class Transform2 extends ComponentAdapter<Transform2> {
+public final class Transform2 extends Component<Transform2> {
 	
 	private final Vector2 position = new Vector2();
 	private float rotation;
@@ -19,6 +20,9 @@ public final class Transform2 extends ComponentAdapter<Transform2> {
 	public Transform2 () {}
 	
 	@Override
+	public void added () {}
+	
+	@Override
 	public Component<Transform2> copy () {
 		Transform2 transform = new Transform2();
 		transform.position.set(position);
@@ -26,6 +30,11 @@ public final class Transform2 extends ComponentAdapter<Transform2> {
 		transform.scaleX = scaleX;
 		transform.scaleY = scaleY;
 		return transform;
+	}
+	
+	@Override
+	public Class<?>[] getDependencies () {
+		return null;
 	}
 	
 	/** @return the {@link Vector2}, not a deep copy */
@@ -68,6 +77,12 @@ public final class Transform2 extends ComponentAdapter<Transform2> {
 		lookAt(vector.x, vector.y);
 	}
 	
+	@Override
+	public void removed () {}
+	
+	@Override
+	public void render (GL20 gl, Render render) {}
+	
 	/** Adds a rotation amount to the current value
 	 * @param rotation the rotation amount */
 	public void rotate (float rotation) {
@@ -102,8 +117,14 @@ public final class Transform2 extends ComponentAdapter<Transform2> {
 	}
 	
 	@Override
+	public void started () {}
+	
+	@Override
 	public String toString () {
 		return "[Transform2 position=" + position + " rot=" + rotation + " sX=" + scaleX + " sY=" + scaleY + "]";
 	}
+	
+	@Override
+	public void update (float delta) {}
 	
 }

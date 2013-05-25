@@ -1,5 +1,5 @@
 
-package sx.richard.entity.executors;
+package sx.richard.entity.enginetasks;
 
 import sx.richard.entity.Engine;
 import sx.richard.entity.EngineTask;

@@ -17,6 +17,11 @@ public class RenderLayer extends ComponentAdapter<RenderLayer> {
 		return updateLayer;
 	}
 	
+	@Override
+	public Class<?>[] getDependencies () {
+		return null;
+	}
+	
 	/** @return the layer */
 	public int getLayer () {
 		return layer;

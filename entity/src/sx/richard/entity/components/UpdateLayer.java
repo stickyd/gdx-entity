@@ -17,6 +17,11 @@ public class UpdateLayer extends ComponentAdapter<UpdateLayer> {
 		return updateLayer;
 	}
 	
+	@Override
+	public Class<?>[] getDependencies () {
+		return null;
+	}
+	
 	/** @return the layer */
 	public int getLayer () {
 		return layer;
