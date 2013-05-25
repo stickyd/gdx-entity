@@ -46,7 +46,8 @@ public class Main extends ApplicationAdapter {
 		
 		@Override
 		public void update (float delta) {
-			get(Transform2.class).rotate(45f * delta);
+			get(Transform2.class).rotate(-90f * delta);
+			get(Transform2.class).getPosition().add(20f * delta, 0);
 		}
 		
 	}
@@ -85,12 +86,18 @@ public class Main extends ApplicationAdapter {
 		Entity viewer = new Entity("viewer");
 		StareAt stareAt = new StareAt();
 		viewer.add(stareAt);
+		world.add(viewer);
 		
 		Asset arrow = new Asset("arrow.png", Texture.class);
 		DrawTexture drawTexture = new DrawTexture(arrow);
 		viewer.add(drawTexture);
 		
-		world.add(viewer);
+		Entity aaa = new Entity("aa");
+		Transform2 t = aaa.get(Transform2.class);
+		t.setScale(0.5f, 0.5f);
+		t.setParent(viewer.get(Transform2.class));
+		aaa.add(new DrawTexture(arrow));
+		world.add(aaa);
 		
 		Engine.debug = true;
 		

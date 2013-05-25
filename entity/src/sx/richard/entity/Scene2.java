@@ -45,7 +45,17 @@ public class Scene2 implements Scene<Camera2> {
 			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
 				Class componentClass = entity.get(i);
 				Component component = entity.get(componentClass);
+				component.preRender(gl, render);
+			}
+			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
+				Class componentClass = entity.get(i);
+				Component component = entity.get(componentClass);
 				component.render(gl, render);
+			}
+			for (int i = entity.getComponentCount() - 1; i >= 0; i--) {
+				Class componentClass = entity.get(i);
+				Component component = entity.get(componentClass);
+				component.postRender(gl, render);
 			}
 		}
 		render.end();

@@ -53,6 +53,13 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 		return started;
 	}
 	
+	/** Invoked when rendering in reverse, to undo transforms etc. */
+	public abstract void postRender (GL20 gl, Render render);
+	
+	/** Invoked when rendering, before the main render method; apply transforms
+	 * etc. */
+	public abstract void preRender (GL20 gl, Render render);
+	
 	/** Invoked when this component is removed from the world */
 	public abstract void removed ();
 	

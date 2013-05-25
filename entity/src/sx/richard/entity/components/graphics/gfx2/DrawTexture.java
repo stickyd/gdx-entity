@@ -6,16 +6,14 @@ import sx.richard.entity.Component;
 import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.Engine;
 import sx.richard.entity.Render;
-import sx.richard.entity.components.Transform2;
 import sx.richard.entity.editor.Editable;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.math.Vector2;
 
-/** Draws a texture, requires a {@link Transform2}
+/** Draws a texture
  * @author Richard Taylor */
 public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	
@@ -84,7 +82,7 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	
 	@Override
 	public Class<?>[] getDependencies () {
-		return new Class<?>[] { Transform2.class };
+		return null;
 	}
 	
 	@Override
@@ -97,25 +95,19 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 				region = Engine.getAssetManager().forceLoad(asset);
 			} else
 				throw new RuntimeException("Incompatible asset, type=" + asset.type);
-			region = Engine.getAssetManager().forceLoad(asset);
 		}
 		if (region != null) {
-			Transform2 transform = get(Transform2.class);
-			Vector2 position = transform.getPosition();
 			int width = region.getRegionWidth();
 			int height = region.getRegionHeight();
-			float x = position.x + this.x - width / 2f;
-			float y = position.y + this.y - height / 2f;
-			float rotation = transform.getRotation();
-			float scaleX = transform.getScaleX() * this.scaleX;
-			float scaleY = transform.getScaleY() * this.scaleY;
+			float x = this.x - width / 2f;
+			float y = this.y - height / 2f;
 			float originX = this.originX * width;
 			float originY = this.originY * height;
 			if (color != null) {
 				render.spriteBatch.setColor(color);
 			}
-			render.spriteBatch.draw(region.getTexture(), x, y, originX, originY, width, height, scaleX, scaleY, rotation, 0, 0,
-				width, height, flipX, flipY);
+			render.spriteBatch.draw(region.getTexture(), x, y, originX, originY, width, height, scaleX, scaleY, 0, 0, 0, width,
+				height, flipX, flipY);
 			render.spriteBatch.setColor(Color.WHITE);
 		}
 	}

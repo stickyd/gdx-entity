@@ -7,6 +7,7 @@ import sx.richard.entity.editor.Editable;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
 /** A basic component with 2D position/orientation transform
@@ -15,17 +16,25 @@ public final class Transform2 extends Component<Transform2> {
 	
 	//FIXME Proper world transforms fro parent
 	
+	private Matrix4 matrix;
+	private Matrix4 matrixInv;
 	@Editable
 	private Transform2 parent;
 	@Editable
-	private final Vector2 position = new Vector2();
+	private final Vector2 position;
 	@Editable
 	private float rotation;
 	@Editable
 	private float scaleX = 1f;
 	@Editable
 	private float scaleY = 1f;
-	private final Vector2 worldPosition = new Vector2();
+	
+	{
+		position = new Vector2();
+		matrix = new Matrix4();
+		matrixInv = new Matrix4();
+		matrix.idt();
+	}
 	
 	/** Set to 0,0 */
 	public Transform2 () {}
@@ -54,11 +63,7 @@ public final class Transform2 extends Component<Transform2> {
 	
 	/** @return the {@link Vector2}, not a deep copy */
 	public Vector2 getPosition () {
-		worldPosition.set(position);
-		if (parent != null) {
-			worldPosition.add(parent.position);
-		}
-		return worldPosition;
+		return position;
 	}
 	
 	/** @return the rotation, in degrees */
@@ -94,6 +99,26 @@ public final class Transform2 extends Component<Transform2> {
 	 * @param vector the {@link Transform2} */
 	public void lookAt (Vector2 vector) {
 		lookAt(vector.x, vector.y);
+	}
+	
+	@Override
+	public void postRender (GL20 gl, Render render) {
+		Matrix4 transform = render.spriteBatch.getTransformMatrix();
+		transform.mul(matrixInv);
+		render.spriteBatch.setTransformMatrix(transform);
+		if (parent != null) {
+			parent.postRender(gl, render);
+		}
+	}
+	
+	@Override
+	public void preRender (GL20 gl, Render render) {
+		if (parent != null) {
+			parent.preRender(gl, render);
+		}
+		Matrix4 transform = render.spriteBatch.getTransformMatrix();
+		transform.mul(matrix);
+		render.spriteBatch.setTransformMatrix(transform);
 	}
 	
 	@Override
@@ -149,6 +174,12 @@ public final class Transform2 extends Component<Transform2> {
 	}
 	
 	@Override
-	public void update (float delta) {}
+	public void update (float delta) {
+		matrix.idt();
+		matrix.translate(position.x, position.y, 0);
+		matrix.rotate(0, 0, 1, rotation);
+		matrix.scale(scaleX, scaleY, 1f);
+		matrixInv.set(matrix).inv();
+	}
 	
 }

@@ -14,6 +14,12 @@ public abstract class ComponentAdapter<T extends Component<T>> extends Component
 	public void added () {}
 	
 	@Override
+	public void postRender (GL20 gl, Render render) {}
+	
+	@Override
+	public void preRender (GL20 gl, Render render) {}
+	
+	@Override
 	public void removed () {}
 	
 	@Override
