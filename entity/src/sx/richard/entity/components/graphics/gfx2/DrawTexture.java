@@ -13,14 +13,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 /** Draws a texture, requires a {@link Transform2}
  * @author Richard Taylor */
 public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	
-	@Editable(type = { Texture.class, AtlasRegion.class, TextureRegion.class })
+	@Editable(type = { Texture.class, AtlasRegion.class })
 	private Asset asset;
 	/** The {@link Color}, will use whatever is set before if <code>null</code> */
 	@Editable
@@ -37,14 +36,14 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	/** The Y origin, as a multiple of the width */
 	@Editable
 	public float originY = 0.5f;
+	/** The {@link AtlasRegion} */
+	private AtlasRegion region;
 	/** The X scale */
 	@Editable
 	public float scaleX = 1f;
 	/** The Y scale */
 	@Editable
 	public float scaleY = 1f;
-	/** The {@link Texture} */
-	private Texture texture;
 	/** The X position offset, additional to the transform */
 	@Editable
 	public float x;
@@ -65,7 +64,7 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	public Component<DrawTexture> copy () {
 		DrawTexture component = new DrawTexture();
 		component.asset = asset;
-		component.texture = texture;
+		component.region = region == null ? null : new AtlasRegion(region);
 		component.color = color == null ? null : new Color(color);
 		component.flipX = flipX;
 		component.flipY = flipY;
@@ -90,14 +89,21 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	
 	@Override
 	public void render (GL20 gl, Render render) {
-		if (texture == null) {
-			texture = Engine.getAssetManager().forceLoad(asset);
+		if (region == null) {
+			if (asset.type == Texture.class) {
+				Texture texture = Engine.getAssetManager().forceLoad(asset);
+				region = new AtlasRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
+			} else if (asset.type == AtlasRegion.class) {
+				region = Engine.getAssetManager().forceLoad(asset);
+			} else
+				throw new RuntimeException("Incompatible asset, type=" + asset.type);
+			region = Engine.getAssetManager().forceLoad(asset);
 		}
-		if (texture != null) {
+		if (region != null) {
 			Transform2 transform = get(Transform2.class);
 			Vector2 position = transform.getPosition();
-			int width = texture.getWidth();
-			int height = texture.getHeight();
+			int width = region.getRegionWidth();
+			int height = region.getRegionHeight();
 			float x = position.x + this.x - width / 2f;
 			float y = position.y + this.y - height / 2f;
 			float rotation = transform.getRotation();
@@ -108,8 +114,8 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 			if (color != null) {
 				render.spriteBatch.setColor(color);
 			}
-			render.spriteBatch.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, 0, 0, width, height,
-				flipX, flipY);
+			render.spriteBatch.draw(region.getTexture(), x, y, originX, originY, width, height, scaleX, scaleY, rotation, 0, 0,
+				width, height, flipX, flipY);
 			render.spriteBatch.setColor(Color.WHITE);
 		}
 	}
@@ -119,7 +125,7 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 		if (this.asset != asset) {
 			Engine.getAssetManager().unload(this.asset);
 			this.asset = asset;
-			texture = null;
+			region = null;
 			Engine.getAssetManager().load(asset);
 		}
 	}
