@@ -6,23 +6,30 @@ import sx.richard.entity.AbstractWorld;
 import sx.richard.entity.Component;
 import sx.richard.entity.Engine;
 import sx.richard.entity.EngineTask;
+import sx.richard.entity.Render;
 
-/** Runs the update method on entity components and systems
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
+
+/** Runs the render method on all the entities
  * @author Richard Taylor */
-public class UpdateComponents implements EngineTask {
+public class RenderComponents implements EngineTask {
 	
 	// Warnings are safe here
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute (Engine engine) {
-		float delta = 1f / 60f;//FIXME Gdx.graphics.getDeltaTime();
+		GL20 gl = Gdx.gl20;
+		Render render = engine.getRender();
+		render.begin();
 		AbstractWorld world = engine.getWorld();
 		for (AbstractEntity entity : world.getEntities()) {
 			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
 				Class componentClass = entity.get(i);
 				Component component = entity.get(componentClass);
-				component.update(delta);
+				component.render(gl, render);
 			}
 		}
+		render.end();
 	}
 }

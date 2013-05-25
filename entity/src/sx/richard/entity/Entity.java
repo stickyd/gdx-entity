@@ -41,10 +41,17 @@ public final class Entity extends AbstractEntity {
 		if (components.containsKey(componentClass))
 			throw new IllegalStateException("Entity already contains component for " + componentClass + ", " + this);
 		else {
+			if (component.getEntity() != null)
+				throw new IllegalStateException("This Component is already part of an entity");
+			if (component.hasStarted())
+				throw new IllegalStateException("This Component has already been started, you cannot re-use it");
+			component.setEntity(this);
+			component.setStarted();
 			components.put(componentClass, component);
 			componentIndices.put(componentClass, Integer.valueOf(index));
 			componentTypes.add(componentClass);
 			sort();
+			component.started();
 			componentAdded(this, component);
 		}
 	}

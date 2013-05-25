@@ -2,13 +2,14 @@
 package sx.richard.entity.components;
 
 import sx.richard.entity.Component;
+import sx.richard.entity.ComponentAdapter;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 /** A basic component with 2D position/orientation transform
  * @author Richard Taylor */
-public final class Transform2 extends Component<Transform2> {
+public final class Transform2 extends ComponentAdapter<Transform2> {
 	
 	private final Vector2 position = new Vector2();
 	private float rotation;
@@ -51,7 +52,8 @@ public final class Transform2 extends Component<Transform2> {
 	 * @param x the X
 	 * @param y the Y */
 	public void lookAt (float x, float y) {
-		rotation = MathUtils.degRad * MathUtils.atan2(y - position.y, x - position.x);
+		//FIXME Not actually correct
+		rotation = MathUtils.radDeg * MathUtils.atan2(y - position.y, x - position.x);
 	}
 	
 	/** Looks at a given transform

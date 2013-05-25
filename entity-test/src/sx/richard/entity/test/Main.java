@@ -2,96 +2,81 @@
 package sx.richard.entity.test;
 
 import sx.richard.entity.Component;
-import sx.richard.entity.ComponentSystem;
+import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.Engine;
 import sx.richard.entity.EngineTask;
 import sx.richard.entity.Entity;
 import sx.richard.entity.World;
 import sx.richard.entity.components.Transform2;
+import sx.richard.entity.components.graphics.core.ClearColor;
+import sx.richard.entity.editor.Editable;
+import sx.richard.entity.executors.RenderComponents;
+import sx.richard.entity.executors.SortRenderLayer;
 import sx.richard.entity.executors.SortUpdateLayer;
 import sx.richard.entity.executors.UpdateComponents;
 
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.utils.Array;
 
-public class Main {
+public class Main extends ApplicationAdapter {
 	
-	private class StareAt extends Component<StareAt> {
+	public class StareAt extends ComponentAdapter<StareAt> {
 		
-		private Transform2 transform;
+		@Editable(name = "other target", description = "This isn't used yet")
+		private Transform2 otherTarget;
+		@Editable
+		private Transform2 target;
 		
 		@Override
 		public Component<StareAt> copy () {
 			return this;
 		}
 		
-		public Transform2 getTarget () {
-			return transform;
-		}
-		
-		public void setTarget (Transform2 transform) {
-			this.transform = transform;
-		}
-		
-	}
-	
-	private class StareSystem extends ComponentSystem<StareAt> {
-		
-		public StareSystem () {
-			super(StareAt.class);
-		}
-		
 		@Override
-		public void added (StareAt component) {
-			System.out.println("Added stare");
-		}
-		
-		@Override
-		public void removed (StareAt component) {
-			System.out.println("Removed stare");
-		}
-		
-		@Override
-		public void update (StareAt component) {
-			System.out.println("Update stare...");
-			
-		}
+		public void update (float delta) {}
 		
 	}
 	
 	public static void main (String[] args) {
-		new Main();
+		new LwjglApplication(new Main(), "Test", 640, 640, true);
 	}
 	
+	Engine engine;
+	
 	Main () {
-		Engine engine = new Engine();
+		engine = new Engine();
 		
 		Array<EngineTask> engineTasks = new Array<EngineTask>();
 		engineTasks.add(new SortUpdateLayer());
 		engineTasks.add(new UpdateComponents());
+		engineTasks.add(new SortRenderLayer());
+		engineTasks.add(new RenderComponents());
 		engine.setEngineTasks(engineTasks);
 		
 		World world = new World();
 		engine.setWorld(world);
 		
-		engine.add(new StareSystem());
+		Entity clear = new Entity("clear");
+		clear.add(new ClearColor());
+		world.add(clear);
 		
 		Entity target = new Entity("target");
 		target.add(new Transform2());
 		
 		Entity viewer = new Entity("viewer");
 		StareAt stareAt = new StareAt();
-		stareAt.setTarget(target.get(Transform2.class));
+		stareAt.target = target.get(Transform2.class);
+		viewer.add(new Transform2());
 		viewer.add(stareAt);
 		
 		world.add(target);
 		world.add(viewer);
 		
-		for (int i = 0; i < 20; i++) {
-			engine.update(1f / 60f);
-		}
-		
-		System.out.println("Complete");
-		
 	}
 	
+	@Override
+	public void render () {
+		engine.run();
+	}
 }
