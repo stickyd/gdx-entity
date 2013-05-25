@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Matrix4;
 
 /** A basic two-dimension {@link Scene}, requires a {@link Camera2} to render a
  * {@link World}
@@ -19,6 +19,8 @@ public class Scene2 implements Scene<Camera2> {
 	
 	private static final float DEBUG_SIZE = 10;
 	private Camera2 camera;
+	
+	private final Matrix4 shapeTransform = new Matrix4();
 	
 	private World world;
 	
@@ -41,11 +43,13 @@ public class Scene2 implements Scene<Camera2> {
 		render.spriteBatch.setProjectionMatrix(camera.getCombinedMatrix());
 		render.shapes.setProjectionMatrix(camera.getCombinedMatrix());
 		render.begin();
+		Matrix4 transform = render.spriteBatch.getTransformMatrix();
 		for (Entity entity : world.getEntities()) {
 			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
 				Class componentClass = entity.get(i);
 				Component component = entity.get(componentClass);
-				component.preRender(gl, render);
+				component.transform(gl, render, transform);
+				render.spriteBatch.setTransformMatrix(transform);
 			}
 			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
 				Class componentClass = entity.get(i);
@@ -55,7 +59,8 @@ public class Scene2 implements Scene<Camera2> {
 			for (int i = entity.getComponentCount() - 1; i >= 0; i--) {
 				Class componentClass = entity.get(i);
 				Component component = entity.get(componentClass);
-				component.postRender(gl, render);
+				component.untransform(gl, render, transform);
+				render.spriteBatch.setTransformMatrix(transform);
 			}
 		}
 		render.end();
@@ -63,27 +68,30 @@ public class Scene2 implements Scene<Camera2> {
 	
 	@Override
 	public void renderDebug (Engine engine, GL20 gl) {
-		ShapeRenderer shapes = engine.getRender().shapes;
+		Render render = engine.getRender();
+		ShapeRenderer shapes = render.shapes;
+		shapeTransform.idt();
 		shapes.begin(ShapeType.Line);
 		for (Entity entity : world.getEntities()) {
 			Transform2 transform = entity.get(Transform2.class);
 			Debug debug = entity.get(Debug.class);
 			if (transform != null && debug.render) {
-				Vector2 position = transform.getPosition();
-				float x = position.x;
-				float y = position.y;
+				transform.transform(gl, render, shapeTransform);
+				shapes.setTransformMatrix(shapeTransform);
 				Selected selected = entity.get(Selected.class);
 				shapes.setColor(selected != null && selected.on ? Color.RED : Color.YELLOW);
 				float rotation = transform.getRotation();
 				shapes.rotate(0, 0, 1, rotation);
-				shapes.line(x - DEBUG_SIZE, y - DEBUG_SIZE, x + DEBUG_SIZE, y - DEBUG_SIZE);
-				shapes.line(x + DEBUG_SIZE, y - DEBUG_SIZE, x + DEBUG_SIZE, y + DEBUG_SIZE);
-				shapes.line(x + DEBUG_SIZE, y + DEBUG_SIZE, x - DEBUG_SIZE, y + DEBUG_SIZE);
-				shapes.line(x - DEBUG_SIZE, y + DEBUG_SIZE, x - DEBUG_SIZE, y - DEBUG_SIZE);
-				shapes.line(x, y - DEBUG_SIZE, x, y + DEBUG_SIZE);
-				shapes.line(x - DEBUG_SIZE, y, x, y + DEBUG_SIZE);
-				shapes.line(x + DEBUG_SIZE, y, x, y + DEBUG_SIZE);
+				shapes.line(-DEBUG_SIZE, -DEBUG_SIZE, +DEBUG_SIZE, -DEBUG_SIZE);
+				shapes.line(+DEBUG_SIZE, -DEBUG_SIZE, +DEBUG_SIZE, +DEBUG_SIZE);
+				shapes.line(+DEBUG_SIZE, +DEBUG_SIZE, -DEBUG_SIZE, +DEBUG_SIZE);
+				shapes.line(-DEBUG_SIZE, +DEBUG_SIZE, -DEBUG_SIZE, -DEBUG_SIZE);
+				shapes.line(0, -DEBUG_SIZE, 0, DEBUG_SIZE);
+				shapes.line(-DEBUG_SIZE, 0, 0, DEBUG_SIZE);
+				shapes.line(DEBUG_SIZE, 0, 0, DEBUG_SIZE);
 				shapes.rotate(0, 0, 1, -rotation);
+				transform.untransform(gl, render, shapeTransform);
+				shapes.setTransformMatrix(shapeTransform);
 			}
 		}
 		shapes.end();

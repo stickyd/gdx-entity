@@ -102,26 +102,6 @@ public final class Transform2 extends Component<Transform2> {
 	}
 	
 	@Override
-	public void postRender (GL20 gl, Render render) {
-		Matrix4 transform = render.spriteBatch.getTransformMatrix();
-		transform.mul(matrixInv);
-		render.spriteBatch.setTransformMatrix(transform);
-		if (parent != null) {
-			parent.postRender(gl, render);
-		}
-	}
-	
-	@Override
-	public void preRender (GL20 gl, Render render) {
-		if (parent != null) {
-			parent.preRender(gl, render);
-		}
-		Matrix4 transform = render.spriteBatch.getTransformMatrix();
-		transform.mul(matrix);
-		render.spriteBatch.setTransformMatrix(transform);
-	}
-	
-	@Override
 	public void removed () {}
 	
 	@Override
@@ -171,6 +151,22 @@ public final class Transform2 extends Component<Transform2> {
 	@Override
 	public String toString () {
 		return "[Transform2 position=" + position + " rot=" + rotation + " sX=" + scaleX + " sY=" + scaleY + "]";
+	}
+	
+	@Override
+	public void transform (GL20 gl, Render render, Matrix4 transform) {
+		if (parent != null) {
+			parent.transform(gl, render, transform);
+		}
+		transform.mul(matrix);
+	}
+	
+	@Override
+	public void untransform (GL20 gl, Render render, Matrix4 transform) {
+		transform.mul(matrixInv);
+		if (parent != null) {
+			parent.untransform(gl, render, transform);
+		}
 	}
 	
 	@Override

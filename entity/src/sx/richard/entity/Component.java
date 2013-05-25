@@ -4,6 +4,7 @@ package sx.richard.entity;
 import sx.richard.entity.util.Copyable;
 
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Matrix4;
 
 /** The base class for all entity components. For the sake of any potential
  * reflection-based editors, a public no-arg constructor should be made
@@ -53,13 +54,6 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 		return started;
 	}
 	
-	/** Invoked when rendering in reverse, to undo transforms etc. */
-	public abstract void postRender (GL20 gl, Render render);
-	
-	/** Invoked when rendering, before the main render method; apply transforms
-	 * etc. */
-	public abstract void preRender (GL20 gl, Render render);
-	
 	/** Invoked when this component is removed from the world */
 	public abstract void removed ();
 	
@@ -84,6 +78,13 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	/** Invoked when the component is first started; when it is added to an
 	 * entity, at this point it may or may not be in the {@link World} */
 	public abstract void started ();
+	
+	/** Invoked when rendering in reverse, to undo transforms etc. */
+	public abstract void transform (GL20 gl, Render render, Matrix4 transform);
+	
+	/** Invoked when rendering, before the main render method; apply transforms
+	 * etc. */
+	public abstract void untransform (GL20 gl, Render render, Matrix4 transform);
 	
 	/** Invoked each update
 	 * @param delta the time since the last update, varies */
