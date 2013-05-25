@@ -8,7 +8,7 @@ import sx.richard.entity.components.Transform2;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-/** A 2D orthographic camera
+/** A 2D orthographic camera, requires a {@link Transform2}
  * @author Richard Taylor */
 public class Camera2 extends ComponentAdapter<Camera2> {
 	

@@ -6,14 +6,16 @@ import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.Engine;
 import sx.richard.entity.EngineTask;
 import sx.richard.entity.Entity;
+import sx.richard.entity.Scene2;
 import sx.richard.entity.World;
 import sx.richard.entity.components.Transform2;
+import sx.richard.entity.components.graphics.camera.Camera2;
 import sx.richard.entity.components.graphics.core.ClearColor;
 import sx.richard.entity.editor.Editable;
 import sx.richard.entity.executors.RenderComponents;
 import sx.richard.entity.executors.SortRenderLayer;
 import sx.richard.entity.executors.SortUpdateLayer;
-import sx.richard.entity.executors.UpdateComponents;
+import sx.richard.entity.executors.UpdateScene;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -34,12 +36,17 @@ public class Main extends ApplicationAdapter {
 		}
 		
 		@Override
+		public Class<?>[] getDependencies () {
+			return new Class<?>[] { Transform2.class };
+		}
+		
+		@Override
 		public void update (float delta) {}
 		
 	}
 	
 	public static void main (String[] args) {
-		new LwjglApplication(new Main(), "Test", 640, 640, true);
+		new LwjglApplication(new Main(), "Test", 320, 320, true);
 	}
 	
 	Engine engine;
@@ -50,13 +57,23 @@ public class Main extends ApplicationAdapter {
 		
 		Array<EngineTask> engineTasks = new Array<EngineTask>();
 		engineTasks.add(new SortUpdateLayer());
-		engineTasks.add(new UpdateComponents());
+		engineTasks.add(new UpdateScene());
 		engineTasks.add(new SortRenderLayer());
 		engineTasks.add(new RenderComponents());
 		engine.setEngineTasks(engineTasks);
 		
 		World world = new World();
-		engine.setWorld(world);
+		
+		Scene2 scene = new Scene2();
+		engine.setScene(scene);
+		scene.setWorld(world);
+		
+		Entity camera = new Entity("camera");
+		camera.add(new Transform2());
+		Camera2 camera2 = new Camera2();
+		camera.add(camera2);
+		world.add(camera);
+		scene.setCamera(camera2);
 		
 		Entity clear = new Entity("clear");
 		clear.add(new ClearColor());
@@ -75,6 +92,10 @@ public class Main extends ApplicationAdapter {
 		world.add(viewer);
 		
 		// validate the entities
+		Array<Entity> invalidEntities = world.getInvalidEntities();
+		if (invalidEntities.size > 0) {
+			System.out.println("invalid entites! size=" + invalidEntities.size);
+		}
 		
 	}
 	

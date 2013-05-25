@@ -6,16 +6,15 @@ import sx.richard.entity.EngineTask;
 import sx.richard.entity.Scene;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 
-/** Runs the render method on all the entities
+/** Runs the update method on entity components and systems
  * @author Richard Taylor */
-public class RenderComponents implements EngineTask {
+public class UpdateScene implements EngineTask {
 	
 	@Override
 	public void execute (Engine engine) {
-		GL20 gl = Gdx.gl20;
+		float delta = Gdx.graphics.getDeltaTime();
 		Scene<?> scene = engine.getScene();
-		scene.render(engine, gl);
+		scene.update(engine, delta);
 	}
 }

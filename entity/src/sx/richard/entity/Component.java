@@ -11,15 +11,15 @@ import com.badlogic.gdx.graphics.GL20;
  * @author Richard Taylor */
 public abstract class Component<T extends Component<T>> implements Copyable<Component<T>> {
 	
-	private AbstractEntity entity;
+	private Entity entity;
 	private boolean started;
-	private AbstractWorld world;
+	private World world;
 	
 	/** Added when this component is added to the world */
 	public abstract void added ();
 	
 	/** @param componentClass the type of the component
-	 * @return another component from the {@link AbstractEntity} this is part of */
+	 * @return another component from the {@link Entity} this is part of */
 	public final <K extends Component<K>> K get (Class<K> componentClass) {
 		K component = null;
 		if (entity != null) {
@@ -33,18 +33,18 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	public abstract Class<?>[] getDependencies ();
 	
 	/** @return the {@link Entity} this component is a part of */
-	public AbstractEntity getEntity () {
+	public Entity getEntity () {
 		return entity;
 	}
 	
 	/** @param id the entity Id
 	 * @return the entity in this {@link World}, with the given Id */
-	public final AbstractEntity getEntity (String id) {
+	public final Entity getEntity (String id) {
 		return world.get(id);
 	}
 	
 	/** @return the world this lives in */
-	public AbstractWorld getWorld () {
+	public World getWorld () {
 		return world;
 	}
 	
@@ -59,8 +59,8 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	/** Invoked on render */
 	public abstract void render (GL20 gl, Render render);
 	
-	/** @param entity the {@link AbstractEntity} to associate with this component */
-	void setEntity (AbstractEntity entity) {
+	/** @param entity the {@link Entity} to associate with this component */
+	void setEntity (Entity entity) {
 		this.entity = entity;
 	}
 	
@@ -70,7 +70,7 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	}
 	
 	/** @param world the {@link World} this component's entity is a part of */
-	void setWorld (AbstractWorld world) {
+	void setWorld (World world) {
 		this.world = world;
 	}
 	

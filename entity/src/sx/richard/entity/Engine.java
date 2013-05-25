@@ -8,10 +8,11 @@ import com.badlogic.gdx.utils.OrderedMap;
 /** A basic {@link AbstractEngine} implementation, keeps the systems in an
  * {@link OrderedMap}
  * @author Richard Taylor */
-public class Engine extends AbstractEngine {
+public final class Engine implements WorldListener {
 	
 	private final Array<EngineTask> engineTasks;
 	private final Render render;
+	private Scene scene;
 	
 	{
 		SpriteBatch spriteBatch = new SpriteBatch();
@@ -22,7 +23,7 @@ public class Engine extends AbstractEngine {
 	// These warnings are safe
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void entityAdded (AbstractWorld world, AbstractEntity entity) {
+	public void entityAdded (World world, Entity entity) {
 		for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
 			Class componentType = entity.get(i);
 			Component<?> component = entity.get(componentType);
@@ -34,7 +35,7 @@ public class Engine extends AbstractEngine {
 	// These warnings are safe
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void entityRemoved (AbstractWorld world, AbstractEntity entity) {
+	public void entityRemoved (World world, Entity entity) {
 		for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
 			Class componentType = entity.get(i);
 			Component<?> component = entity.get(componentType);
@@ -53,7 +54,12 @@ public class Engine extends AbstractEngine {
 		return render;
 	}
 	
-	@Override
+	/** @return the {@link Scene} */
+	public Scene getScene () {
+		return scene;
+	}
+	
+	/** Runs the {@link EngineTask}s */
 	public void run () {
 		for (EngineTask engineTask : engineTasks) {
 			engineTask.execute(this);
@@ -65,5 +71,12 @@ public class Engine extends AbstractEngine {
 	public void setEngineTasks (Array<EngineTask> engineTasks) {
 		this.engineTasks.clear();
 		this.engineTasks.addAll(engineTasks);
+	}
+	
+	/** @param scene the {@link Scene} to set, must not be <code>null</code> */
+	public void setScene (Scene scene) {
+		if (scene == null)
+			throw new NullPointerException("Scene must not be null");
+		this.scene = scene;
 	}
 }
