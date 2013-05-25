@@ -97,7 +97,7 @@ public class Main extends ApplicationAdapter {
 		t.setScale(0.5f, 0.5f);
 		t.setParent(viewer.get(Transform2.class));
 		aaa.add(new DrawTexture(arrow));
-		world.add(aaa);
+//		world.add(aaa);
 		
 		Engine.debug = true;
 		

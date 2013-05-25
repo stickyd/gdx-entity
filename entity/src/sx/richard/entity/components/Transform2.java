@@ -17,6 +17,7 @@ public final class Transform2 extends Component<Transform2> {
 	//FIXME Proper world transforms fro parent
 	
 	private Matrix4 matrix;
+	private boolean matrixDirty;
 	private Matrix4 matrixInv;
 	@Editable
 	private Transform2 parent;
@@ -28,12 +29,15 @@ public final class Transform2 extends Component<Transform2> {
 	private float scaleX = 1f;
 	@Editable
 	private float scaleY = 1f;
+	private Matrix4 worldMatrix;
+	private Matrix4 worldMatrixInv;
 	
 	{
 		position = new Vector2();
 		matrix = new Matrix4();
 		matrixInv = new Matrix4();
-		matrix.idt();
+		worldMatrix = new Matrix4();
+		worldMatrixInv = new Matrix4();
 	}
 	
 	/** Set to 0,0 */
@@ -155,27 +159,36 @@ public final class Transform2 extends Component<Transform2> {
 	
 	@Override
 	public void transform (GL20 gl, Render render, Matrix4 transform) {
-		if (parent != null) {
-			parent.transform(gl, render, transform);
-		}
-		transform.mul(matrix);
+		transform.mul(worldMatrix);
 	}
 	
 	@Override
 	public void untransform (GL20 gl, Render render, Matrix4 transform) {
-		transform.mul(matrixInv);
-		if (parent != null) {
-			parent.untransform(gl, render, transform);
-		}
+		transform.mul(worldMatrixInv);
 	}
 	
 	@Override
 	public void update (float delta) {
-		matrix.idt();
-		matrix.translate(position.x, position.y, 0);
-		matrix.rotate(0, 0, 1, rotation);
-		matrix.scale(scaleX, scaleY, 1f);
-		matrixInv.set(matrix).inv();
+		updateMatrix();
+		matrixDirty = true;
+	}
+	
+	private void updateMatrix () {
+		if (matrixDirty) {
+			matrix.idt();
+			matrix.translate(position.x, position.y, 0);
+			matrix.rotate(0, 0, 1, rotation);
+			matrix.scale(scaleX, scaleY, 1f);
+			matrixInv.set(matrix).inv();
+			if (parent != null) {
+				parent.updateMatrix();
+				worldMatrix.set(parent.matrix).mul(matrix);
+			} else {
+				worldMatrix.set(matrix);
+			}
+			worldMatrixInv.set(worldMatrix).inv();
+			matrixDirty = false;
+		}
 	}
 	
 }

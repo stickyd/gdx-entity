@@ -70,18 +70,16 @@ public class Scene2 implements Scene<Camera2> {
 	public void renderDebug (Engine engine, GL20 gl) {
 		Render render = engine.getRender();
 		ShapeRenderer shapes = render.shapes;
-		shapeTransform.idt();
 		shapes.begin(ShapeType.Line);
 		for (Entity entity : world.getEntities()) {
 			Transform2 transform = entity.get(Transform2.class);
 			Debug debug = entity.get(Debug.class);
 			if (transform != null && debug.render) {
+				shapeTransform.idt();
 				transform.transform(gl, render, shapeTransform);
 				shapes.setTransformMatrix(shapeTransform);
 				Selected selected = entity.get(Selected.class);
 				shapes.setColor(selected != null && selected.on ? Color.RED : Color.YELLOW);
-				float rotation = transform.getRotation();
-				shapes.rotate(0, 0, 1, rotation);
 				shapes.line(-DEBUG_SIZE, -DEBUG_SIZE, +DEBUG_SIZE, -DEBUG_SIZE);
 				shapes.line(+DEBUG_SIZE, -DEBUG_SIZE, +DEBUG_SIZE, +DEBUG_SIZE);
 				shapes.line(+DEBUG_SIZE, +DEBUG_SIZE, -DEBUG_SIZE, +DEBUG_SIZE);
@@ -89,9 +87,6 @@ public class Scene2 implements Scene<Camera2> {
 				shapes.line(0, -DEBUG_SIZE, 0, DEBUG_SIZE);
 				shapes.line(-DEBUG_SIZE, 0, 0, DEBUG_SIZE);
 				shapes.line(DEBUG_SIZE, 0, 0, DEBUG_SIZE);
-				shapes.rotate(0, 0, 1, -rotation);
-				transform.untransform(gl, render, shapeTransform);
-				shapes.setTransformMatrix(shapeTransform);
 			}
 		}
 		shapes.end();
