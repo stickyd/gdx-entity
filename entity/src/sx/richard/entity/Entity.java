@@ -57,7 +57,7 @@ public final class Entity extends AbstractEntity {
 	}
 	
 	@Override
-	public <T extends Component<T>> T get (Class<T> componentClass) {
+	public <T extends Component<?>> T get (Class<T> componentClass) {
 		// Type safe by logic
 		@SuppressWarnings("unchecked")
 		T component = (T)components.get(componentClass);
@@ -65,7 +65,7 @@ public final class Entity extends AbstractEntity {
 	}
 	
 	@Override
-	public <T extends Component<T>> Class<T> get (int index) {
+	public <T extends Component<?>> Class<T> get (int index) {
 		// Type safe from insertion
 		@SuppressWarnings("unchecked")
 		Class<T> componentType = (Class<T>)componentTypes.get(index);
@@ -88,8 +88,32 @@ public final class Entity extends AbstractEntity {
 		return componentIndices.get(componentType);
 	}
 	
+	// This warning is safe here, allow it to fail
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Component<T>> boolean has (Class<T> componentClass) {
+	public ObjectMap<Class<? extends Component<?>>, Array<Class<? extends Component<?>>>> getMissingDependencies () {
+		ObjectMap<Class<? extends Component<?>>, Array<Class<? extends Component<?>>>> missing = new ObjectMap<Class<? extends Component<?>>, Array<Class<? extends Component<?>>>>();
+		for (Component<?> component : components.values()) {
+			Class<? extends Component<?>>[] dependencies = (Class<? extends Component<?>>[])component.getDependencies();
+			if (dependencies != null) {
+				for (Class<? extends Component<?>> dependency : dependencies) {
+					if (!has(dependency)) {
+						Class<? extends Component<?>> componentType = (Class<? extends Component<?>>)component.getClass();
+						Array<Class<? extends Component<?>>> missingComponents = missing.get(componentType);
+						if (missingComponents == null) {
+							missingComponents = new Array<Class<? extends Component<?>>>(1);
+							missing.put(componentType, missingComponents);
+						}
+						missingComponents.add(dependency);
+					}
+				}
+			}
+		}
+		return missing;
+	}
+	
+	@Override
+	public <T extends Component<?>> boolean has (Class<T> componentClass) {
 		return components.containsKey(componentClass);
 	}
 	

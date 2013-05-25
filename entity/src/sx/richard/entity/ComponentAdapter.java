@@ -11,6 +11,11 @@ public abstract class ComponentAdapter<T extends Component<T>> extends Component
 	public void added () {}
 	
 	@Override
+	public Class<?>[] getDependencies () {
+		return null;
+	}
+	
+	@Override
 	public void removed () {}
 	
 	@Override

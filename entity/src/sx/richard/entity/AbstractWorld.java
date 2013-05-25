@@ -50,6 +50,9 @@ public abstract class AbstractWorld implements WorldListener {
 	/** @return an array containing the the entities */
 	public abstract Array<AbstractEntity> getEntities ();
 	
+	/** @return any invalid entities (bad components, etc.) */
+	public abstract Array<AbstractEntity> getInvalidEntities ();
+	
 	/** @param id the {@link AbstractEntity} Id
 	 * @return whether this world contains an entity with the given Id, this may
 	 *         be faster than using {@link AbstractWorld#get(String)} */

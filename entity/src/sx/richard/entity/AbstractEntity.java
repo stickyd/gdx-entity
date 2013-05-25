@@ -4,17 +4,20 @@ package sx.richard.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+
 /** An entity is a basic container that holds many {@link Component}s; these are
- * mapped against their type. Use {@link AbstractEntity#get(Class)} to fetch a component
- * of that type. The components are held in a sorted list, so may be (depending
- * on implementation) executed in a predictably ordered way. Components are
- * sorted by index, in ascending order. These may have duplicates, no order is
- * guaranteed between matching components with indices.
+ * mapped against their type. Use {@link AbstractEntity#get(Class)} to fetch a
+ * component of that type. The components are held in a sorted list, so may be
+ * (depending on implementation) executed in a predictably ordered way.
+ * Components are sorted by index, in ascending order. These may have
+ * duplicates, no order is guaranteed between matching components with indices.
  * <p>
  * 
  * All implementations must be sure to properly invoke the
- * {@link EntityListener}s, by calling the listener methods on {@link AbstractEntity}
- * itself.
+ * {@link EntityListener}s, by calling the listener methods on
+ * {@link AbstractEntity} itself.
  * @author Richard Taylor */
 public abstract class AbstractEntity implements EntityListener {
 	
@@ -73,6 +76,9 @@ public abstract class AbstractEntity implements EntityListener {
 		}
 	}
 	
+	/** @return whether all the {@link Component}s dependencies are satisfied */
+	public abstract ObjectMap<Class<? extends Component<?>>, Array<Class<? extends Component<?>>>> getMissingDependencies ();
+	
 	@Override
 	public void entityIdChanged (AbstractEntity entity, String previousId) {
 		for (int i = 0, n = listeners.size(); i < n; i++) {
@@ -83,12 +89,12 @@ public abstract class AbstractEntity implements EntityListener {
 	/** Gets the component of a particular type
 	 * @param componentClass the component type
 	 * @return the component, <code>null</code> if it doesn't exist */
-	public abstract <T extends Component<T>> T get (Class<T> componentClass);
+	public abstract <T extends Component<?>> T get (Class<T> componentClass);
 	
 	/** @param index the component index (not necessarily the sorting index; but
 	 *           the internal index)
 	 * @return the component type */
-	public abstract <T extends Component<T>> Class<T> get (int index);
+	public abstract <T extends Component<?>> Class<T> get (int index);
 	
 	/** @return the number of components */
 	public abstract int getComponentCount ();
@@ -107,8 +113,9 @@ public abstract class AbstractEntity implements EntityListener {
 	
 	/** @param componentClass the component type
 	 * @return whether this entity has a component of a particular type; may be
-	 *         faster than an <code>{@link AbstractEntity#get(Class)} != null</code> */
-	public abstract <T extends Component<T>> boolean has (Class<T> componentClass);
+	 *         faster than an
+	 *         <code>{@link AbstractEntity#get(Class)} != null</code> */
+	public abstract <T extends Component<?>> boolean has (Class<T> componentClass);
 	
 	/** Removes the component of a given type, does nothing if the component
 	 * doesn't exist

@@ -44,7 +44,8 @@ public class Main extends ApplicationAdapter {
 	
 	Engine engine;
 	
-	Main () {
+	@Override
+	public void create () {
 		engine = new Engine();
 		
 		Array<EngineTask> engineTasks = new Array<EngineTask>();
@@ -72,6 +73,8 @@ public class Main extends ApplicationAdapter {
 		
 		world.add(target);
 		world.add(viewer);
+		
+		// validate the entities
 		
 	}
 	

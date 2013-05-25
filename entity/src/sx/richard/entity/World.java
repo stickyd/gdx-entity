@@ -59,6 +59,17 @@ public class World extends AbstractWorld implements EntityListener {
 	}
 	
 	@Override
+	public Array<AbstractEntity> getInvalidEntities () {
+		Array<AbstractEntity> invalidEntities = new Array<AbstractEntity>();
+		for (AbstractEntity entity : entityArray) {
+			if (entity.getMissingDependencies().size > 0) {
+				invalidEntities.add(entity);
+			}
+		}
+		return invalidEntities;
+	}
+	
+	@Override
 	public boolean has (String id) {
 		return entities.containsKey(id);
 	}

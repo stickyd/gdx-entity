@@ -28,6 +28,10 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 		return component;
 	}
 	
+	/** @return the {@link Component} types this requires, for editor (may return
+	 *         <code>null</code>) */
+	public abstract Class<?>[] getDependencies ();
+	
 	/** @return the {@link Entity} this component is a part of */
 	public AbstractEntity getEntity () {
 		return entity;
