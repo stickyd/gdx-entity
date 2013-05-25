@@ -1,6 +1,7 @@
 
 package sx.richard.entity;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
@@ -30,6 +31,7 @@ public final class Engine implements WorldListener {
 		engineTasks = new Array<EngineTask>();
 		assets = new AssetCollection();
 		assetManager = new AssetManager();
+		Gdx.input.setInputProcessor(Input.getInputProcessor());
 	}
 	
 	// These warnings are safe
@@ -81,6 +83,7 @@ public final class Engine implements WorldListener {
 		for (EngineTask engineTask : engineTasks) {
 			engineTask.execute(this);
 		}
+		Input.update();
 	}
 	
 	/** Sets the engine tasks
@@ -96,4 +99,5 @@ public final class Engine implements WorldListener {
 			throw new NullPointerException("Scene must not be null");
 		this.scene = scene;
 	}
+	
 }
