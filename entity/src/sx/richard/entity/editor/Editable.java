@@ -24,6 +24,6 @@ public @interface Editable {
 	public boolean readOnly() default false;
 	
 	/** @return the type this points to, usage may vary */
-	public Class<?> type() default Object.class;
+	public Class<?>[] type() default Object.class;
 	
 }

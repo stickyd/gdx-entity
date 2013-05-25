@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 
 /** Runs the render method on all the entities
  * @author Richard Taylor */
-public class RenderComponents implements EngineTask {
+public class RenderScene implements EngineTask {
 	
 	@Override
 	public void execute (Engine engine) {

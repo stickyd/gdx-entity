@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.OrderedMap;
 public final class Engine implements WorldListener {
 	
 	private static AssetManager assetManager;
+	/** Whether this is debug mode or not */
+	public static boolean debug;
 	
 	/** @return the {@link AssetManager} */
 	public static AssetManager getAssetManager () {

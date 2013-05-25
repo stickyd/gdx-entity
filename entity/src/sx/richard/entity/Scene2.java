@@ -30,6 +30,7 @@ public class Scene2 implements Scene<Camera2> {
 		Render render = engine.getRender();
 		camera.update();
 		render.spriteBatch.setProjectionMatrix(camera.getCombinedMatrix());
+		render.shapes.setProjectionMatrix(camera.getCombinedMatrix());
 		render.begin();
 		for (Entity entity : world.getEntities()) {
 			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {

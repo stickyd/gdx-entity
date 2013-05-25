@@ -3,6 +3,7 @@ package sx.richard.entity.components;
 
 import sx.richard.entity.Component;
 import sx.richard.entity.Render;
+import sx.richard.entity.editor.Editable;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.MathUtils;
@@ -12,9 +13,19 @@ import com.badlogic.gdx.math.Vector2;
  * @author Richard Taylor */
 public final class Transform2 extends Component<Transform2> {
 	
+	//FIXME Proper world transforms fro parent
+	
+	@Editable
+	private Transform2 parent;
+	@Editable
 	private final Vector2 position = new Vector2();
+	@Editable
 	private float rotation;
-	private float scaleX = 1, scaleY = 1;
+	@Editable
+	private float scaleX = 1f;
+	@Editable
+	private float scaleY = 1f;
+	private final Vector2 worldPosition = new Vector2();
 	
 	/** Set to 0,0 */
 	public Transform2 () {}
@@ -37,9 +48,17 @@ public final class Transform2 extends Component<Transform2> {
 		return null;
 	}
 	
+	public Transform2 getParent () {
+		return parent;
+	}
+	
 	/** @return the {@link Vector2}, not a deep copy */
 	public Vector2 getPosition () {
-		return position;
+		worldPosition.set(position);
+		if (parent != null) {
+			worldPosition.add(parent.position);
+		}
+		return worldPosition;
 	}
 	
 	/** @return the rotation, in degrees */
@@ -87,6 +106,11 @@ public final class Transform2 extends Component<Transform2> {
 	 * @param rotation the rotation amount */
 	public void rotate (float rotation) {
 		this.rotation += rotation;
+	}
+	
+	/** @param transform the parent {@link Transform2} */
+	public void setParent (Transform2 transform) {
+		parent = transform;
 	}
 	
 	/** @param vector the {@link Vector2} */

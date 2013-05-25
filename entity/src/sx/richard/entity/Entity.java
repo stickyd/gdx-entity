@@ -4,10 +4,15 @@ package sx.richard.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import sx.richard.entity.components.RenderLayer;
+import sx.richard.entity.components.Transform2;
+import sx.richard.entity.components.UpdateLayer;
+
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
-/** A basic {@link AbstractEntity}
+/** A basic entity; contains a {@link Transform2}, {@link UpdateLayer} and
+ * {@link RenderLayer}
  * @author Richard Taylor */
 public final class Entity implements EntityListener {
 	
@@ -24,6 +29,9 @@ public final class Entity implements EntityListener {
 		componentIndices = new ObjectMap<Class<? extends Component<?>>, Integer>();
 		componentTypes = new Array<Class<? extends Component<?>>>();
 		listeners = new ArrayList<EntityListener>();
+		add(new Transform2());
+		add(new UpdateLayer());
+		add(new RenderLayer());
 	}
 	
 	/** Creates an empty Entity

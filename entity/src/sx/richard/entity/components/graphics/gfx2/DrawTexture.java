@@ -12,13 +12,15 @@ import sx.richard.entity.editor.Editable;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 /** Draws a texture, requires a {@link Transform2}
  * @author Richard Taylor */
 public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	
-	@Editable(type = Texture.class)
+	@Editable(type = { Texture.class, AtlasRegion.class, TextureRegion.class })
 	private Asset asset;
 	/** The {@link Color}, will use whatever is set before if <code>null</code> */
 	@Editable
@@ -64,6 +66,15 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 		DrawTexture component = new DrawTexture();
 		component.asset = asset;
 		component.texture = texture;
+		component.color = color == null ? null : new Color(color);
+		component.flipX = flipX;
+		component.flipY = flipY;
+		component.originX = originX;
+		component.originY = originY;
+		component.scaleX = scaleX;
+		component.scaleY = scaleY;
+		component.x = x;
+		component.y = y;
 		return component;
 	}
 	
@@ -94,8 +105,12 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 			float scaleY = transform.getScaleY() * this.scaleY;
 			float originX = this.originX * width;
 			float originY = this.originY * height;
+			if (color != null) {
+				render.spriteBatch.setColor(color);
+			}
 			render.spriteBatch.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, 0, 0, width, height,
 				flipX, flipY);
+			render.spriteBatch.setColor(Color.WHITE);
 		}
 	}
 	

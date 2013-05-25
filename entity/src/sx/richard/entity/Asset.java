@@ -1,9 +1,20 @@
 
 package sx.richard.entity;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+
 /** Describes an asset, this is immutable
  * @author Richard Taylor */
 public final class Asset {
+	
+	/** Default assets
+	 * @author Richard Taylor */
+	public static final class Defaults {
+		
+		/** The debug {@link BitmapFont} font, at "debug.fnt" */
+		public static final Asset DEBUG_FONT = new Asset("debug.fnt", BitmapFont.class);
+		
+	}
 	
 	/** The path to the asset */
 	public final String path;
