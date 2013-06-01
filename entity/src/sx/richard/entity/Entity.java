@@ -16,16 +16,16 @@ import com.badlogic.gdx.utils.ObjectMap;
 /** A basic entity; contains a {@link Transform2}, {@link UpdateLayer},
  * {@link RenderLayer} and {@link Debug}
  * @author Richard Taylor */
-public final class Entity implements EntityListener {
+public final class Entity extends EntityGroup implements EntityListener {
 	
+	protected final List<EntityListener> listeners;
 	private final ObjectMap<Class<? extends Component<?>>, Integer> componentIndices;
 	private final ObjectMap<Class<? extends Component<?>>, Component<?>> components;
 	private final Array<Class<? extends Component<?>>> componentTypes;
+	
 	private final EventBus eventBus;
 	
 	private String id;
-	
-	protected final List<EntityListener> listeners;
 	
 	{
 		components = new ObjectMap<Class<? extends Component<?>>, Component<?>>();
@@ -222,14 +222,14 @@ public final class Entity implements EntityListener {
 		entityIdChanged(this, previousId);
 	}
 	
-	/** Sorts the componentTypes list by index */
-	private void sort () {
-		//FIXME Sort by index
-	}
-	
 	@Override
 	public String toString () {
 		return "<Entity id=" + id + "/>";
+	}
+	
+	/** Sorts the componentTypes list by index */
+	private void sort () {
+		//FIXME Sort by index
 	}
 	
 }

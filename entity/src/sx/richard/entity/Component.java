@@ -14,7 +14,7 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	
 	private Entity entity;
 	private boolean started;
-	private World world;
+	private EntityGroup group;
 	
 	/** Added when this component is added to the world */
 	public abstract void added ();
@@ -41,12 +41,12 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	/** @param id the entity Id
 	 * @return the entity in this {@link World}, with the given Id */
 	public final Entity getEntity (String id) {
-		return world.get(id);
+		return group.get(id);
 	}
 	
 	/** @return the world this lives in */
-	public World getWorld () {
-		return world;
+	public EntityGroup getGroup () {
+		return group;
 	}
 	
 	/** @return whether this component has been started */
@@ -71,8 +71,8 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	}
 	
 	/** @param world the {@link World} this component's entity is a part of */
-	void setWorld (World world) {
-		this.world = world;
+	void setGroup (EntityGroup group) {
+		this.group = group;
 	}
 	
 	/** Invoked when the component is first started; when it is added to an

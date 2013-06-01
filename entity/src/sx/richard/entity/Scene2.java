@@ -34,8 +34,6 @@ public class Scene2 implements Scene<Camera2> {
 		return world;
 	}
 	
-	// These warnings are fine here
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void render (Engine engine, GL20 gl) {
 		Render render = engine.getRender();
@@ -44,25 +42,7 @@ public class Scene2 implements Scene<Camera2> {
 		render.shapes.setProjectionMatrix(camera.getCombinedMatrix());
 		render.begin();
 		Matrix4 transform = render.spriteBatch.getTransformMatrix();
-		for (Entity entity : world.getEntities()) {
-			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
-				Class componentClass = entity.get(i);
-				Component component = entity.get(componentClass);
-				component.transform(gl, render, transform);
-				render.spriteBatch.setTransformMatrix(transform);
-			}
-			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
-				Class componentClass = entity.get(i);
-				Component component = entity.get(componentClass);
-				component.render(gl, render);
-			}
-			for (int i = entity.getComponentCount() - 1; i >= 0; i--) {
-				Class componentClass = entity.get(i);
-				Component component = entity.get(componentClass);
-				component.untransform(gl, render, transform);
-				render.spriteBatch.setTransformMatrix(transform);
-			}
-		}
+		renderGroup(world, gl, render, transform);
 		render.end();
 	}
 	
@@ -106,16 +86,46 @@ public class Scene2 implements Scene<Camera2> {
 		this.world = world;
 	}
 	
-	// These warnings are fine here
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void update (Engine engine, float delta) {
-		for (Entity entity : world.getEntities()) {
+		updateGroup(world, delta);
+	}
+	
+	// These warnings are fine here
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void renderGroup (EntityGroup group, GL20 gl, Render render, Matrix4 transform) {
+		for (Entity entity : group.getEntities()) {
+			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
+				Class componentClass = entity.get(i);
+				Component component = entity.get(componentClass);
+				component.transform(gl, render, transform);
+				render.spriteBatch.setTransformMatrix(transform);
+			}
+			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
+				Class componentClass = entity.get(i);
+				Component component = entity.get(componentClass);
+				component.render(gl, render);
+			}
+			renderGroup(entity, gl, render, transform);
+			for (int i = entity.getComponentCount() - 1; i >= 0; i--) {
+				Class componentClass = entity.get(i);
+				Component component = entity.get(componentClass);
+				component.untransform(gl, render, transform);
+				render.spriteBatch.setTransformMatrix(transform);
+			}
+		}
+	}
+	
+	// These warnings are fine here
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void updateGroup (EntityGroup group, float delta) {
+		for (Entity entity : group.getEntities()) {
 			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
 				Class componentClass = entity.get(i);
 				Component component = entity.get(componentClass);
 				component.update(delta);
 			}
+			updateGroup(entity, delta);
 		}
 	}
 	

@@ -95,9 +95,10 @@ public class Main extends ApplicationAdapter {
 		Entity aaa = new Entity("aa");
 		Transform2 t = aaa.get(Transform2.class);
 		t.setScale(0.5f, 0.5f);
-		t.setParent(viewer.get(Transform2.class));
-		aaa.add(new DrawTexture(arrow));
-//		world.add(aaa);
+		t.addPosition(50, 50);
+		drawTexture = new DrawTexture(arrow);
+		aaa.add(drawTexture);
+		viewer.add(aaa);
 		
 		Engine.debug = true;
 		

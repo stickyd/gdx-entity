@@ -11,16 +11,15 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
 /** A basic component with 2D position/orientation transform
+ * 
  * @author Richard Taylor */
 public final class Transform2 extends Component<Transform2> {
 	
-	//FIXME Proper world transforms fro parent
+	// FIXME Proper world transforms fro parent
 	
 	private Matrix4 matrix;
 	private boolean matrixDirty;
 	private Matrix4 matrixInv;
-	@Editable
-	private Transform2 parent;
 	@Editable
 	private final Vector2 position;
 	@Editable
@@ -29,15 +28,11 @@ public final class Transform2 extends Component<Transform2> {
 	private float scaleX = 1f;
 	@Editable
 	private float scaleY = 1f;
-	private Matrix4 worldMatrix;
-	private Matrix4 worldMatrixInv;
 	
 	{
 		position = new Vector2();
 		matrix = new Matrix4();
 		matrixInv = new Matrix4();
-		worldMatrix = new Matrix4();
-		worldMatrixInv = new Matrix4();
 	}
 	
 	/** Set to 0,0 */
@@ -45,6 +40,12 @@ public final class Transform2 extends Component<Transform2> {
 	
 	@Override
 	public void added () {}
+	
+	/** @param x the X coordinate to add
+	 * @param y the Y coordinate to add */
+	public void addPosition (float x, float y) {
+		position.add(x, y);
+	}
 	
 	@Override
 	public Component<Transform2> copy () {
@@ -59,10 +60,6 @@ public final class Transform2 extends Component<Transform2> {
 	@Override
 	public Class<?>[] getDependencies () {
 		return null;
-	}
-	
-	public Transform2 getParent () {
-		return parent;
 	}
 	
 	/** @return the {@link Vector2}, not a deep copy */
@@ -86,20 +83,23 @@ public final class Transform2 extends Component<Transform2> {
 	}
 	
 	/** Looks at a given position
+	 * 
 	 * @param x the X
 	 * @param y the Y */
 	public void lookAt (float x, float y) {
-		//FIXME Not actually correct
+		// FIXME Not actually correct
 		rotation = MathUtils.radDeg * MathUtils.atan2(y - position.y, x - position.x);
 	}
 	
 	/** Looks at a given transform
+	 * 
 	 * @param transform the {@link Transform2} */
 	public void lookAt (Transform2 transform) {
 		lookAt(transform.position.x, transform.position.y);
 	}
 	
 	/** Looks at a given transform
+	 * 
 	 * @param vector the {@link Transform2} */
 	public void lookAt (Vector2 vector) {
 		lookAt(vector.x, vector.y);
@@ -112,14 +112,16 @@ public final class Transform2 extends Component<Transform2> {
 	public void render (GL20 gl, Render render) {}
 	
 	/** Adds a rotation amount to the current value
+	 * 
 	 * @param rotation the rotation amount */
 	public void rotate (float rotation) {
 		this.rotation += rotation;
 	}
 	
-	/** @param transform the parent {@link Transform2} */
-	public void setParent (Transform2 transform) {
-		parent = transform;
+	/** @param x the X coordinate
+	 * @param y the Y coordinate */
+	public void setPosition (float x, float y) {
+		position.set(x, y);
 	}
 	
 	/** @param vector the {@link Vector2} */
@@ -152,6 +154,12 @@ public final class Transform2 extends Component<Transform2> {
 	@Override
 	public void started () {}
 	
+	/** @param x the X coordinate to subtract
+	 * @param y the Y coordinate to subtract */
+	public void subPosition (float x, float y) {
+		position.sub(x, y);
+	}
+	
 	@Override
 	public String toString () {
 		return "[Transform2 position=" + position + " rot=" + rotation + " sX=" + scaleX + " sY=" + scaleY + "]";
@@ -159,12 +167,12 @@ public final class Transform2 extends Component<Transform2> {
 	
 	@Override
 	public void transform (GL20 gl, Render render, Matrix4 transform) {
-		transform.mul(worldMatrix);
+		transform.mul(matrix);
 	}
 	
 	@Override
 	public void untransform (GL20 gl, Render render, Matrix4 transform) {
-		transform.mul(worldMatrixInv);
+		transform.mul(matrixInv);
 	}
 	
 	@Override
@@ -180,13 +188,6 @@ public final class Transform2 extends Component<Transform2> {
 			matrix.rotate(0, 0, 1, rotation);
 			matrix.scale(scaleX, scaleY, 1f);
 			matrixInv.set(matrix).inv();
-			if (parent != null) {
-				parent.updateMatrix();
-				worldMatrix.set(parent.matrix).mul(matrix);
-			} else {
-				worldMatrix.set(matrix);
-			}
-			worldMatrixInv.set(worldMatrix).inv();
 			matrixDirty = false;
 		}
 	}
