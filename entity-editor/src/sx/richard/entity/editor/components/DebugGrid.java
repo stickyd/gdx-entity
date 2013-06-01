@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
  * @author Richard Taylor */
 public class DebugGrid extends ComponentAdapter<DebugGrid> {
 	
+	private final int count = 128;
 	private int size = 32;
 	
 	@Override
@@ -38,11 +39,11 @@ public class DebugGrid extends ComponentAdapter<DebugGrid> {
 			render.spriteBatch.end();
 			render.shapes.begin(ShapeType.Line);
 			render.shapes.setColor(0.15f, 0.15f, 0.15f, 1f);
-			for (int x = -size * 32; x < size * 32; x += size) {
-				render.shapes.line(x, -size * 32, x, size * 32);
+			for (int x = -size * count; x < size * count; x += size) {
+				render.shapes.line(x, -size * count, x, size * count);
 			}
-			for (int y = -size * 32; y < size * 32; y += size) {
-				render.shapes.line(-size * 32, y, size * 32, y);
+			for (int y = -size * count; y < size * 64; y += size) {
+				render.shapes.line(-size * count, y, size * count, y);
 			}
 			render.shapes.end();
 			render.spriteBatch.begin();

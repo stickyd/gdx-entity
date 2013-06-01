@@ -9,6 +9,7 @@ import sx.richard.entity.Scene2;
 import sx.richard.entity.World;
 import sx.richard.entity.components.graphics.camera.Camera2;
 import sx.richard.entity.components.graphics.gfx2.DrawTexture;
+import sx.richard.entity.editor.panel.GamePreview;
 import sx.richard.entity.editor.panel.WorldEditor;
 import sx.richard.entity.enginetasks.ClearColor;
 import sx.richard.entity.enginetasks.RenderDebugScene;
@@ -25,7 +26,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 public class Editor extends ApplicationAdapter {
@@ -36,11 +38,12 @@ public class Editor extends ApplicationAdapter {
 	
 	SpriteBatch batch;
 	OrthographicCamera camera;
+	Engine engine;
+	Table root;
 	ShapeRenderer shapes;
-	private Engine engine;
-	
-	private World world;
-	private WorldEditor worldEditor;
+	Stage stage;
+	World world;
+	WorldEditor worldEditor;
 	
 	@Override
 	public void create () {
@@ -82,12 +85,10 @@ public class Editor extends ApplicationAdapter {
 		}
 		
 		worldEditor = new WorldEditor(world);
-		worldEditor.setSize(500, 300);
 		
-		this.camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		this.camera.position.x += this.camera.viewportWidth / 2f;
-		this.camera.position.y += this.camera.viewportHeight / 2f;
-		this.camera.update();
+		stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+		
+		this.camera = (OrthographicCamera)stage.getCamera();
 		
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(this.camera.combined);
@@ -95,27 +96,45 @@ public class Editor extends ApplicationAdapter {
 		shapes = new ShapeRenderer();
 		shapes.setProjectionMatrix(this.camera.combined);
 		
+		root = new Table();
+		stage.addActor(root);
+		
+		final GamePreview www = new GamePreview(world);
+		
+		root.add(new Table() {
+			
+			{
+				defaults().pad(50);
+				add(worldEditor).expand().fill();
+				row();
+				add(www).expand().fill();
+			}
+		}).expand().fill();
+		
+		root.add(new Table() {
+			
+			{	
+				
+			}
+		}).width(300).fill().expandY();
+		
 	}
 	
 	@Override
 	public void render () {
 		Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		int x = 100;
-		int y = Gdx.graphics.getHeight() - 500;
-		renderWorldEditor(x, y);
+		stage.draw();
 	}
 	
-	private void renderWorldEditor (float x, float y) {
-		Texture texture = worldEditor.render();
-		int width = texture.getWidth();
-		int height = texture.getHeight();
-		batch.begin();
-		batch.draw(texture, x, y, width, height);
-		batch.end();
-		shapes.setColor(0.6f, 0.6f, 0.6f, 1f);
-		shapes.begin(ShapeType.Rectangle);
-		shapes.rect(x, y, width, height);
-		shapes.end();
+	@Override
+	public void resize (int w, int h) {
+		stage.setViewport(w, h, false);
+		root.setSize(w, h);
+		root.invalidate();
+		camera.viewportWidth = w;
+		camera.viewportHeight = h;
+		camera.update();
 	}
+	
 }
