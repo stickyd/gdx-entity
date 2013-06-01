@@ -17,7 +17,7 @@ public class Render {
 		shapes = new ShapeRenderer();
 	}
 	
-	Render (SpriteBatch spriteBatch) {
+	public Render (SpriteBatch spriteBatch) {
 		this.spriteBatch = spriteBatch;
 	}
 	

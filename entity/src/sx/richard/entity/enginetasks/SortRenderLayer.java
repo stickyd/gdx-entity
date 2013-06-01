@@ -10,8 +10,6 @@ import sx.richard.entity.components.UpdateLayer;
 public class SortRenderLayer implements EngineTask {
 	
 	@Override
-	public void execute (Engine engine) {
-		//FIXME Sort the entities
-	}
+	public void execute (Engine engine) {}
 	
 }

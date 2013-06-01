@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="libs/gdx.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/entity"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/eventbus"/>
+	<classpathentry kind="src" path="assets"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
