@@ -13,12 +13,14 @@ import sx.richard.entity.editor.panel.ComponentList;
 import sx.richard.entity.editor.panel.EntityList;
 import sx.richard.entity.editor.panel.GamePreview;
 import sx.richard.entity.editor.panel.WorldEditor;
+import sx.richard.entity.editor.test.Spin;
 import sx.richard.entity.enginetasks.ClearColor;
 import sx.richard.entity.enginetasks.RenderDebugScene;
 import sx.richard.entity.enginetasks.RenderScene;
 import sx.richard.entity.enginetasks.SortRenderLayer;
 import sx.richard.entity.enginetasks.SortUpdateLayer;
 import sx.richard.entity.enginetasks.UpdateScene;
+import sx.richard.entity.util.EntityUtils;
 import sx.richard.eventbus.EventBus;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -29,8 +31,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 public class Editor extends ApplicationAdapter {
@@ -47,10 +52,16 @@ public class Editor extends ApplicationAdapter {
 	
 	SpriteBatch batch;
 	OrthographicCamera camera;
+	ComponentList componentList;
 	Engine engine;
+	EntityList entityList;
+	boolean paused;
+	boolean playing;
 	Table root;
+	SaveState saveState;
 	ShapeRenderer shapes;
 	Stage stage;
+	boolean step;
 	World world;
 	WorldEditor worldEditor;
 	
@@ -85,6 +96,7 @@ public class Editor extends ApplicationAdapter {
 		Entity arrow = new Entity("arrow");
 		Asset asset = new Asset("arrow.png", Texture.class);
 		arrow.add(new DrawTexture(asset));
+		arrow.add(new Spin());
 		world.add(arrow);
 		
 		// validate the entities
@@ -116,25 +128,101 @@ public class Editor extends ApplicationAdapter {
 		root.add(new Table() {
 			
 			{
-				add(worldEditor).expand().fill().space(5);
-				row();
-				add(www).expand().fill().space(5);
+				defaults().space(5);
+				add(new TextButton("Play", Assets.skin) {
+					
+					{
+						addListener(new ClickListener() {
+							
+							@Override
+							public void clicked (InputEvent event, float x, float y) {
+								start();
+							}
+						});
+					}
+				});
+				add(new TextButton("Pause", Assets.skin) {
+					
+					{
+						addListener(new ClickListener() {
+							
+							@Override
+							public void clicked (InputEvent event, float x, float y) {
+								freeze();
+							}
+						});
+					}
+				});
+				add(new TextButton("Unpause", Assets.skin) {
+					
+					{
+						addListener(new ClickListener() {
+							
+							@Override
+							public void clicked (InputEvent event, float x, float y) {
+								unfreeze();
+							}
+						});
+					}
+				});
+				add(new TextButton("Step", Assets.skin) {
+					
+					{
+						addListener(new ClickListener() {
+							
+							@Override
+							public void clicked (InputEvent event, float x, float y) {
+								step();
+							}
+						});
+					}
+				});
+				add(new TextButton("Stop", Assets.skin) {
+					
+					{
+						addListener(new ClickListener() {
+							
+							@Override
+							public void clicked (InputEvent event, float x, float y) {
+								stop();
+							}
+						});
+					}
+				});
+				add().expand();
 			}
-		}).expand().fill().padLeft(5).padTop(5).padBottom(5).space(5);
+		}).expandX().height(50).fill().padLeft(5);
+		
+		root.row();
 		
 		root.add(new Table() {
 			
 			{
-				add(new EntityList(world)).expand().fill();
+				
+				add(new Table() {
+					
+					{
+						add(worldEditor).expand().fill().space(5);
+						row();
+						add(www).expand().fill().space(5);
+					}
+				}).expand().fill().padLeft(5).padTop(5).padBottom(5).space(5);
+				
+				add(new Table() {
+					
+					{
+						add(entityList = new EntityList(world)).expand().fill();
+					}
+				}).width(180).fill().expandY().padTop(5).space(5).padBottom(5);
+				
+				add(new Table() {
+					
+					{
+						add(componentList = new ComponentList()).expand().fill();
+					}
+				}).width(300).fill().expandY().padTop(5).space(5).padRight(5).padBottom(5);
 			}
-		}).width(180).fill().expandY().padTop(5).space(5).padBottom(5);
-		
-		root.add(new Table() {
-			
-			{
-				add(new ComponentList()).expand().fill();
-			}
-		}).width(300).fill().expandY().padTop(5).space(5).padRight(5).padBottom(5);
+		}).expand().fill();
 		
 		Gdx.input.setInputProcessor(stage);
 		
@@ -144,6 +232,8 @@ public class Editor extends ApplicationAdapter {
 	public void render () {
 		Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		update();
+		stage.act();
 		stage.draw();
 	}
 	
@@ -157,4 +247,40 @@ public class Editor extends ApplicationAdapter {
 		camera.update();
 	}
 	
+	private void freeze () {
+		paused = true;
+	}
+	
+	private void start () {
+		playing = true;
+		step = false;
+		paused = false;
+		saveState = new SaveState(world);
+		saveState.save();
+	}
+	
+	private void step () {
+		step = true;
+	}
+	
+	private void stop () {
+		saveState.restore();
+		playing = false;
+		entityList.refresh();
+	}
+	
+	private void unfreeze () {
+		paused = false;
+	}
+	
+	private void update () {
+		if (playing) {
+			if (!paused) {
+				EntityUtils.updateGroup(world, Gdx.graphics.getDeltaTime());
+			} else if (step) {
+				EntityUtils.updateGroup(world, 1f / 60f);
+			}
+			step = false;
+		}
+	}
 }

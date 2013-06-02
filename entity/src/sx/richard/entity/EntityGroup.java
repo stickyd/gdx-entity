@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 /** A {@link EntityGroup} contains the {@link Entity}s, and allows
  * {@link EntityGroupListener}s to observe entity changes.
  * @author Richard Taylor */
-public abstract class EntityGroup implements EntityGroupListener, EntityListener {
+public class EntityGroup implements EntityGroupListener, EntityListener {
 	
 	private final ObjectMap<String, Entity> entities;
 	private final Array<Entity> entityArray; // FIXME Wrap Array so that it can't be edited
@@ -119,6 +119,17 @@ public abstract class EntityGroup implements EntityGroupListener, EntityListener
 		Entity entity = get(id);
 		if (entity != null) {
 			remove(entity);
+		}
+	}
+	
+	/** Removes all entities */
+	public void removeAll () {
+		Array<String> ids = new Array<String>();
+		for (Entity entity : entityArray) {
+			ids.add(entity.getId());
+		}
+		for (String id : ids) {
+			remove(id);
 		}
 	}
 	

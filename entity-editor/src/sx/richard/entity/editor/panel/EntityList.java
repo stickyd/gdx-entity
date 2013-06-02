@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  * @author Richard Taylor */
 public class EntityList extends Table {
 	
+	private String selectedId;
 	private Tree tree;
 	private final World world;
 	
@@ -33,8 +34,17 @@ public class EntityList extends Table {
 		if (world == null)
 			throw new NullPointerException("World must not be null");
 		this.world = world;
-		setBackground(new TextureRegionDrawable(new TextureRegion(new Texture("background.png"))));
 		createTree();
+		setBackground(new TextureRegionDrawable(new TextureRegion(new Texture("background.png"))));
+	}
+	
+	/** Refreshes the item, attempting to re-select the same previously selected */
+	public void refresh () {
+		clear();
+		createTree();
+		if (selectedId != null) {}
+		selectedId = null;
+		Editor.events.post(new EntitySelected(null));
 	}
 	
 	private void add (Node parent, Entity entity) {
@@ -55,6 +65,7 @@ public class EntityList extends Table {
 				if (node != null) {
 					entity = (Entity)node.getObject();
 				}
+				selectedId = entity == null ? null : entity.getId();
 				Editor.events.post(new EntitySelected(entity));
 			}
 			

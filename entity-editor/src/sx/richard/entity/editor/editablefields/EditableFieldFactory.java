@@ -1,10 +1,9 @@
 
 package sx.richard.entity.editor.editablefields;
 
-import java.lang.reflect.Field;
-
 import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.EditableField;
+import sx.richard.entity.editor.EditableUtils;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -54,28 +53,16 @@ public abstract class EditableFieldFactory<T> {
 	 * @param object the {@link Object} */
 	@SuppressWarnings("unchecked")
 	public Actor create (final EditableField field, final Object object) {
-		Object value;
-		try {
-			boolean hackPrivate = false;
-			if (!field.field.isAccessible()) {
-				hackPrivate = true;
-				field.field.setAccessible(true);
-			}
-			value = field.field.get(object);
-			if (hackPrivate) {
-				field.field.setAccessible(false);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		Object value = EditableUtils.get(field.field, object);
+		if (value == EditableUtils.ERROR)
 			return new Label("[error]", Assets.skin);
-		}
-		return create(field.field, object, (T)value);
+		return create(field, object, (T)value);
 	}
 	
-	/** @param field the {@link Field}
+	/** @param field the {@link EditableField}
 	 * @param object the {@link Object} this field is in
 	 * @param value the current value
 	 * @return the {@link Actor} */
-	protected abstract Actor create (final Field field, final Object object, final T value);
+	protected abstract Actor create (final EditableField field, final Object object, final T value);
 	
 }

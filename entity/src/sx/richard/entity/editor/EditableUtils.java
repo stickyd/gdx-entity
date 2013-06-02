@@ -10,6 +10,30 @@ import com.badlogic.gdx.utils.Array;
  * @author Richard Taylor */
 public class EditableUtils {
 	
+	/** An object used to reference an error field */
+	public static final Object ERROR = new Object();
+	
+	/** @param field the {@link Field}
+	 * @param object the {@link Object}
+	 * @return the value of the object, {@link EditableUtils#ERROR} if it fails */
+	public static Object get (Field field, Object object) {
+		try {
+			boolean hackPrivate = false;
+			if (!field.isAccessible()) {
+				hackPrivate = true;
+				field.setAccessible(true);
+			}
+			Object value = field.get(object);
+			if (hackPrivate) {
+				field.setAccessible(false);
+			}
+			return value;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ERROR;
+		}
+	}
+	
 	/** @param classObject the objects {@link Class}
 	 * @return the {@link Editable} fields in this {@link Class} */
 	public static Array<EditableField> getEditables (Class<?> classObject) {
@@ -37,7 +61,6 @@ public class EditableUtils {
 				field.setAccessible(true);
 			}
 			field.set(object, value);
-			System.out.println("Set, " + value);
 			if (hackPrivate) {
 				field.setAccessible(false);
 			}
@@ -45,5 +68,4 @@ public class EditableUtils {
 			e.printStackTrace();
 		}
 	}
-	
 }

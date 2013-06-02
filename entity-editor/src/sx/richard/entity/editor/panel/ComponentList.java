@@ -41,7 +41,9 @@ public class ComponentList extends Table {
 	public void setEntity (Entity entity) {
 		this.entity = entity;
 		clearComponents();
-		populateComponents();
+		if (entity != null) {
+			populateComponents();
+		}
 	}
 	
 	private void add (final Class<? extends Component<?>> componentType) {

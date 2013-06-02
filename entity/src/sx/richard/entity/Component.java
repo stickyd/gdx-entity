@@ -12,9 +12,9 @@ import com.badlogic.gdx.math.Matrix4;
  * @author Richard Taylor */
 public abstract class Component<T extends Component<T>> implements Copyable<Component<T>> {
 	
-	private Entity entity;
-	private EntityGroup group;
-	private boolean started;
+	private transient Entity entity;
+	private transient EntityGroup group;
+	private transient boolean started;
 	
 	/** Added when this component is added to the world */
 	public abstract void added ();

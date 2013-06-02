@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 
-public class RenderUtils {
+public class EntityUtils {
 	
 	private static final Comparator<Entity> renderComparator;
 	
@@ -70,6 +70,21 @@ public class RenderUtils {
 		entities.sort(renderComparator);
 		for (Entity entity : entities) {
 			sortRenderGroup(entity);
+		}
+	}
+	
+	/** @param group the {@link EntityGroup}
+	 * @param delta the time delta */
+	// These warnings are fine here
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void updateGroup (EntityGroup group, float delta) {
+		for (Entity entity : group.getEntities()) {
+			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
+				Class componentClass = entity.get(i);
+				Component component = entity.get(componentClass);
+				component.update(delta);
+			}
+			updateGroup(entity, delta);
 		}
 	}
 }

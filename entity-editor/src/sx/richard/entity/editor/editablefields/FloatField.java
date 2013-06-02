@@ -1,11 +1,13 @@
 
 package sx.richard.entity.editor.editablefields;
 
-import java.lang.reflect.Field;
-
 import sx.richard.entity.editor.Assets;
+import sx.richard.entity.editor.EditableField;
 import sx.richard.entity.editor.EditableUtils;
+import sx.richard.entity.editor.SetValue;
+import sx.richard.entity.editor.actions.EditorActions;
 
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,13 +18,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  * @author Richard Taylor */
 public class FloatField extends EditableFieldFactory<Float> {
 	
+	private EditableField field;
+	private Object object;
+	
 	@Override
-	protected Actor create (final Field field, final Object object, final Float value) {
+	protected Actor create (final EditableField field, final Object object, final Float value) {
+		this.field = field;
+		this.object = object;
 		return new TextField("0", Assets.skin) {
 			
+			boolean editing;
+			TextFieldStyle style;
 			{
 				final TextField textField = this;
-				final TextFieldStyle style = new TextFieldStyle(getStyle());
+				style = new TextFieldStyle(getStyle());
 				setStyle(style);
 				setText(value.toString());
 				setTextFieldFilter(new TextFieldFilter() {
@@ -50,18 +59,56 @@ public class FloatField extends EditableFieldFactory<Float> {
 				addListener(new ClickListener() {
 					
 					@Override
-					public boolean keyTyped (InputEvent event, char c) {
-						String text = textField.getText();
-						try {
-							Float value = Float.valueOf(text);
-							EditableUtils.set(field, object, value);
-							style.fontColor.set(Color.WHITE);
-						} catch (Exception e) {
-							style.fontColor.set(Color.RED);
+					public boolean keyDown (InputEvent event, int keycode) {
+						if (keycode == Keys.ENTER) {
+							set();
+							getStage().setKeyboardFocus(null);
 						}
-						return true;
+						return false;
 					}
 				});
+			}
+			
+			@Override
+			public void act (float delta) {
+				super.act(delta);
+				if (editing) {
+					if (getStage().getKeyboardFocus() != this) {
+						editing = false;
+						style.fontColor.set(Color.WHITE);
+						set();
+					}
+				} else {
+					if (getStage().getKeyboardFocus() == this) {
+						editing = true;
+						style.fontColor.set(Color.YELLOW);
+					}
+				}
+				if (getStage().getKeyboardFocus() != this) {
+					setText(String.format("%.2f", EditableUtils.get(field.field, object)));
+				}
+			}
+			
+			private void set () {
+				String text = getText().trim();
+				if (text.length() == 0) {
+					text = "0";
+				}
+				setText(text);
+				try {
+					Float value = Float.valueOf(text);
+					if (field.editable.min() != Float.MIN_VALUE) {
+						if (value < field.editable.min())
+							throw new IllegalArgumentException("Minimum value is " + Float.MIN_VALUE);
+					} else if (field.editable.max() != Float.MAX_VALUE) {
+						if (value > field.editable.max())
+							throw new IllegalArgumentException("Maximum value is " + Float.MAX_VALUE);
+					}
+					EditorActions.run(new SetValue(field.field, object, value));
+					style.fontColor.set(Color.WHITE);
+				} catch (Exception e) {
+					style.fontColor.set(Color.RED);
+				}
 			}
 		};
 	}

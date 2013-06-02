@@ -7,7 +7,7 @@ import sx.richard.entity.Render;
 import sx.richard.entity.World;
 import sx.richard.entity.components.RenderLayer;
 import sx.richard.entity.editor.components.DebugGrid;
-import sx.richard.entity.util.RenderUtils;
+import sx.richard.entity.util.EntityUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -82,13 +82,13 @@ public abstract class WorldPanel extends Actor {
 		render.spriteBatch.setProjectionMatrix(camera.combined);
 		render.shapes.setProjectionMatrix(camera.combined);
 		render.begin();
-		RenderUtils.sortRenderGroup(world);
+		EntityUtils.sortRenderGroup(world);
 		if (debug) {
 			Engine.debug = true;
-			RenderUtils.renderGroup(world, Gdx.gl20, render, transform);
+			EntityUtils.renderGroup(world, Gdx.gl20, render, transform);
 			Engine.debug = false;
 		} else {
-			RenderUtils.renderGroup(world, Gdx.gl20, render, transform);
+			EntityUtils.renderGroup(world, Gdx.gl20, render, transform);
 		}
 		render.end();
 		frameBuffer.end();

@@ -5,6 +5,7 @@ import sx.richard.entity.components.Transform2;
 import sx.richard.entity.components.editor.Debug;
 import sx.richard.entity.components.editor.Selected;
 import sx.richard.entity.components.graphics.camera.Camera2;
+import sx.richard.entity.util.EntityUtils;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -88,7 +89,7 @@ public class Scene2 implements Scene<Camera2> {
 	
 	@Override
 	public void update (Engine engine, float delta) {
-		updateGroup(world, delta);
+		EntityUtils.updateGroup(world, delta);
 	}
 	
 	// These warnings are fine here
@@ -113,19 +114,6 @@ public class Scene2 implements Scene<Camera2> {
 				component.untransform(gl, render, transform);
 				render.spriteBatch.setTransformMatrix(transform);
 			}
-		}
-	}
-	
-	// These warnings are fine here
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void updateGroup (EntityGroup group, float delta) {
-		for (Entity entity : group.getEntities()) {
-			for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
-				Class componentClass = entity.get(i);
-				Component component = entity.get(componentClass);
-				component.update(delta);
-			}
-			updateGroup(entity, delta);
 		}
 	}
 	

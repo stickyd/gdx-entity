@@ -33,27 +33,27 @@ public final class Entity extends EntityGroup implements EntityListener {
 		componentTypes = new Array<Class<? extends Component<?>>>();
 		listeners = new ArrayList<EntityListener>();
 		eventBus = new EventBus();
-		add(new Transform2());
-		add(new UpdateLayer());
-		add(new RenderLayer());
-		add(new Debug());
 	}
 	
 	/** Creates an empty Entity
 	 * @param id this entites Id, must not be <code>null</code> */
 	public Entity (String id) {
 		setId(id);
+		addDefaultComponents();
 	}
 	
-	/** @param id the entity Id
+	/** Copies an {@link Entity}
+	 * @param id the entity Id
 	 * @param entity the {@link AbstractEntity} */
+	@SuppressWarnings("unchecked")
 	public <T extends Component<T>> Entity (String id, Entity entity) {
 		this(id);
-		for (int i = 0, n = getComponentCount(); i < n; i++) {
-			Class<T> componentClass = get(i);
-			T component = get(componentClass);
-			int index = getIndex(i);
-			add(component, index);
+		removeDefaultComponents();
+		for (int i = 0, n = entity.getComponentCount(); i < n; i++) {
+			Class<T> componentClass = entity.get(i);
+			T component = entity.get(componentClass);
+			int index = entity.getIndex(i);
+			add((T)component.copy(), index);
 		}
 	}
 	
@@ -225,6 +225,20 @@ public final class Entity extends EntityGroup implements EntityListener {
 	@Override
 	public String toString () {
 		return "<Entity id=" + id + "/>";
+	}
+	
+	private void addDefaultComponents () {
+		add(new Transform2());
+		add(new UpdateLayer());
+		add(new RenderLayer());
+		add(new Debug());
+	}
+	
+	private void removeDefaultComponents () {
+		remove(Transform2.class);
+		remove(UpdateLayer.class);
+		remove(RenderLayer.class);
+		remove(Debug.class);
 	}
 	
 	/** Sorts the componentTypes list by index */
