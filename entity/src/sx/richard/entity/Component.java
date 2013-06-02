@@ -13,8 +13,8 @@ import com.badlogic.gdx.math.Matrix4;
 public abstract class Component<T extends Component<T>> implements Copyable<Component<T>> {
 	
 	private Entity entity;
-	private boolean started;
 	private EntityGroup group;
+	private boolean started;
 	
 	/** Added when this component is added to the world */
 	public abstract void added ();
@@ -49,31 +49,15 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 		return group;
 	}
 	
-	/** @return whether this component has been started */
-	boolean hasStarted () {
-		return started;
-	}
+	/** @return whether this is a hidden component (it will not appear in the
+	 *         editor) */
+	public abstract boolean isHidden ();
 	
 	/** Invoked when this component is removed from the world */
 	public abstract void removed ();
 	
 	/** Invoked on render */
 	public abstract void render (GL20 gl, Render render);
-	
-	/** @param entity the {@link Entity} to associate with this component */
-	void setEntity (Entity entity) {
-		this.entity = entity;
-	}
-	
-	/** Marks as started */
-	void setStarted () {
-		started = true;
-	}
-	
-	/** @param world the {@link World} this component's entity is a part of */
-	void setGroup (EntityGroup group) {
-		this.group = group;
-	}
 	
 	/** Invoked when the component is first started; when it is added to an
 	 * entity, at this point it may or may not be in the {@link World} */
@@ -89,4 +73,24 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	/** Invoked each update
 	 * @param delta the time since the last update, varies */
 	public abstract void update (float delta);
+	
+	/** @return whether this component has been started */
+	boolean hasStarted () {
+		return started;
+	}
+	
+	/** @param entity the {@link Entity} to associate with this component */
+	void setEntity (Entity entity) {
+		this.entity = entity;
+	}
+	
+	/** @param world the {@link World} this component's entity is a part of */
+	void setGroup (EntityGroup group) {
+		this.group = group;
+	}
+	
+	/** Marks as started */
+	void setStarted () {
+		started = true;
+	}
 }

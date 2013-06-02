@@ -2,6 +2,7 @@
 package sx.richard.entity.components;
 
 import sx.richard.entity.Component;
+import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.Render;
 import sx.richard.entity.editor.Editable;
 
@@ -13,7 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 /** A basic component with 2D position/orientation transform
  * 
  * @author Richard Taylor */
-public final class Transform2 extends Component<Transform2> {
+public final class Transform2 extends ComponentAdapter<Transform2> {
 	
 	// FIXME Proper world transforms fro parent
 	
@@ -167,6 +168,8 @@ public final class Transform2 extends Component<Transform2> {
 	
 	@Override
 	public void transform (GL20 gl, Render render, Matrix4 transform) {
+		matrixDirty = true;
+		updateMatrix();
 		transform.mul(matrix);
 	}
 	
@@ -178,15 +181,16 @@ public final class Transform2 extends Component<Transform2> {
 	@Override
 	public void update (float delta) {
 		updateMatrix();
-		matrixDirty = true;
 	}
 	
 	private void updateMatrix () {
 		if (matrixDirty) {
 			matrix.idt();
 			matrix.translate(position.x, position.y, 0);
-			matrix.rotate(0, 0, 1, rotation);
-			matrix.scale(scaleX, scaleY, 1f);
+			matrix.rotate(0, 0, 1, -rotation);
+			float sX = scaleX == 0 ? 0.0001f : scaleX;
+			float sY = scaleY == 0 ? 0.0001f : scaleY;
+			matrix.scale(sX, sY, 1f);
 			matrixInv.set(matrix).inv();
 			matrixDirty = false;
 		}

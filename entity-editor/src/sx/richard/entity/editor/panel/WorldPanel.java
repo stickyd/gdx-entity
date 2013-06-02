@@ -24,8 +24,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
  * @author Richard Taylor */
 public abstract class WorldPanel extends Actor {
 	
+	protected final OrthographicCamera camera;
 	private final SpriteBatch batch;
-	private final OrthographicCamera camera;
 	private final boolean debug;
 	private FrameBuffer frameBuffer;
 	private TextureRegion region;
@@ -47,8 +47,13 @@ public abstract class WorldPanel extends Actor {
 		this.debug = debug;
 		if (debug) {
 			addDebugEntities();
+			addInput();
+		} else {
+			addInput();
 		}
 	}
+	
+	public abstract void addInput ();
 	
 	@Override
 	public void draw (SpriteBatch batch, float parentAlpha) {

@@ -27,6 +27,11 @@ public class UpdateLayer extends ComponentAdapter<UpdateLayer> {
 		return layer;
 	}
 	
+	@Override
+	public boolean isHidden () {
+		return true;
+	}
+	
 	/** @param layer the layer */
 	public void setLayer (int layer) {
 		this.layer = layer;

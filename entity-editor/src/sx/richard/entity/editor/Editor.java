@@ -9,6 +9,8 @@ import sx.richard.entity.Scene2;
 import sx.richard.entity.World;
 import sx.richard.entity.components.graphics.camera.Camera2;
 import sx.richard.entity.components.graphics.gfx2.DrawTexture;
+import sx.richard.entity.editor.panel.ComponentList;
+import sx.richard.entity.editor.panel.EntityList;
 import sx.richard.entity.editor.panel.GamePreview;
 import sx.richard.entity.editor.panel.WorldEditor;
 import sx.richard.entity.enginetasks.ClearColor;
@@ -17,6 +19,7 @@ import sx.richard.entity.enginetasks.RenderScene;
 import sx.richard.entity.enginetasks.SortRenderLayer;
 import sx.richard.entity.enginetasks.SortUpdateLayer;
 import sx.richard.entity.enginetasks.UpdateScene;
+import sx.richard.eventbus.EventBus;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -31,6 +34,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 public class Editor extends ApplicationAdapter {
+	
+	public static EventBus events;
+	
+	static {
+		events = new EventBus();
+	}
 	
 	public static void main (String[] args) {
 		new LwjglApplication(new Editor(), "Test", 1280, 720, true);
@@ -47,6 +56,9 @@ public class Editor extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
+		
+		Assets.load();
+		
 		engine = new Engine();
 		
 		Array<EngineTask> engineTasks = new Array<EngineTask>();
@@ -104,19 +116,27 @@ public class Editor extends ApplicationAdapter {
 		root.add(new Table() {
 			
 			{
-				defaults().pad(50);
-				add(worldEditor).expand().fill();
+				add(worldEditor).expand().fill().space(5);
 				row();
-				add(www).expand().fill();
+				add(www).expand().fill().space(5);
 			}
-		}).expand().fill();
+		}).expand().fill().padLeft(5).padTop(5).padBottom(5).space(5);
 		
 		root.add(new Table() {
 			
-			{	
-				
+			{
+				add(new EntityList(world)).expand().fill();
 			}
-		}).width(300).fill().expandY();
+		}).width(180).fill().expandY().padTop(5).space(5).padBottom(5);
+		
+		root.add(new Table() {
+			
+			{
+				add(new ComponentList()).expand().fill();
+			}
+		}).width(300).fill().expandY().padTop(5).space(5).padRight(5).padBottom(5);
+		
+		Gdx.input.setInputProcessor(stage);
 		
 	}
 	

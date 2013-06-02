@@ -17,6 +17,12 @@ public @interface Editable {
 	/** @return a description that can be displayed in the editor */
 	public String description() default "";
 	
+	/** @return the maximum value */
+	public float max() default Float.MAX_VALUE;
+	
+	/** @return the minimum numeric value */
+	public float min() default Float.MIN_VALUE;
+	
 	/** @return the name that will appear in the editor */
 	public String name() default "";
 	

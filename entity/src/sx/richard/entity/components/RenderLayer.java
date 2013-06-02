@@ -27,6 +27,11 @@ public class RenderLayer extends ComponentAdapter<RenderLayer> {
 		return layer;
 	}
 	
+	@Override
+	public boolean isHidden () {
+		return true;
+	}
+	
 	/** @param layer the layer */
 	public void setLayer (int layer) {
 		this.layer = layer;

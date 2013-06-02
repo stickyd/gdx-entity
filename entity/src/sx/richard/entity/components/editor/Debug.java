@@ -23,4 +23,9 @@ public class Debug extends ComponentAdapter<Debug> {
 		return null;
 	}
 	
+	@Override
+	public boolean isHidden () {
+		return true;
+	}
+	
 }

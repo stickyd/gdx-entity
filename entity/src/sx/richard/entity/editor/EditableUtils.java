@@ -25,4 +25,25 @@ public class EditableUtils {
 		return editableFields;
 	}
 	
+	/** Sets a field, fixes access modifiers
+	 * @param field the {@link Field}
+	 * @param object the {@link Object}
+	 * @param value the value */
+	public static void set (Field field, Object object, Object value) {
+		try {
+			boolean hackPrivate = false;
+			if (!field.isAccessible()) {
+				hackPrivate = true;
+				field.setAccessible(true);
+			}
+			field.set(object, value);
+			System.out.println("Set, " + value);
+			if (hackPrivate) {
+				field.setAccessible(false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
