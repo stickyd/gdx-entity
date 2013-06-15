@@ -48,10 +48,9 @@ public class PlayButtons extends Table {
 		final Drawable stepDown = new TextureRegionDrawable(new TextureRegion(new Texture("stepDown.png")));
 		final Drawable stop = new TextureRegionDrawable(new TextureRegion(new Texture("stop.png")));
 		final Drawable stopDown = new TextureRegionDrawable(new TextureRegion(new Texture("stopDown.png")));
-		add(playButton = new ImageButton(play, playDown));
+		stack(playButton = new ImageButton(play, playDown), unpauseButton = new ImageButton(play, playDown));
 		add(stepButton = new ImageButton(step, stepDown));
 		add(pauseButton = new ImageButton(pause, pauseDown));
-		add(unpauseButton = new ImageButton(play, playDown));
 		add(stopButton = new ImageButton(stop, stopDown));
 		playButton.addListener(play());
 		pauseButton.addListener(pause());
