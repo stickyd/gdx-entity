@@ -4,6 +4,9 @@ package sx.richard.entity.editor.editablefields;
 import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.EditableField;
 import sx.richard.entity.editor.EditableUtils;
+import sx.richard.entity.editor.editablefields.fields.BooleanField;
+import sx.richard.entity.editor.editablefields.fields.FloatField;
+import sx.richard.entity.editor.editablefields.fields.Vector2Field;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -48,6 +51,9 @@ public abstract class EditableFieldFactory<T> {
 	
 	private static void registerDefaults () {
 		register("float", new FloatField());
+		register(Float.class.getName(), new FloatField());
+		register("boolean", new BooleanField());
+		register(Boolean.class.getName(), new BooleanField());
 		register(Vector2.class.getName(), new Vector2Field());
 	}
 	

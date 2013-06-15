@@ -1,8 +1,9 @@
 
-package sx.richard.entity.editor.editablefields;
+package sx.richard.entity.editor.editablefields.fields;
 
 import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.EditableField;
+import sx.richard.entity.editor.editablefields.EditableFieldFactory;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;

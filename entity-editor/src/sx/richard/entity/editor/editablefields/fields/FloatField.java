@@ -1,11 +1,12 @@
 
-package sx.richard.entity.editor.editablefields;
+package sx.richard.entity.editor.editablefields.fields;
 
 import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.EditableField;
 import sx.richard.entity.editor.EditableUtils;
 import sx.richard.entity.editor.SetValue;
 import sx.richard.entity.editor.actions.EditorActions;
+import sx.richard.entity.editor.editablefields.EditableFieldFactory;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
