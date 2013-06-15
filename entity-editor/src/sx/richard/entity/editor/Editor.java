@@ -1,228 +1,111 @@
 
 package sx.richard.entity.editor;
 
-import sx.richard.entity.Asset;
-import sx.richard.entity.Engine;
-import sx.richard.entity.EngineTask;
-import sx.richard.entity.Entity;
-import sx.richard.entity.Scene2;
-import sx.richard.entity.World;
-import sx.richard.entity.components.graphics.camera.Camera2;
-import sx.richard.entity.components.graphics.gfx2.DrawTexture;
-import sx.richard.entity.editor.PlayButtons.RunGameListener;
-import sx.richard.entity.editor.panel.ComponentList;
-import sx.richard.entity.editor.panel.EntityList;
-import sx.richard.entity.editor.panel.GamePreview;
-import sx.richard.entity.editor.panel.WorldEditor;
-import sx.richard.entity.editor.test.Spin;
-import sx.richard.entity.enginetasks.ClearColor;
-import sx.richard.entity.enginetasks.RenderDebugScene;
-import sx.richard.entity.enginetasks.RenderScene;
-import sx.richard.entity.enginetasks.SortRenderLayer;
-import sx.richard.entity.enginetasks.SortUpdateLayer;
-import sx.richard.entity.enginetasks.UpdateScene;
-import sx.richard.entity.util.EntityUtils;
+import sx.richard.entity.editor.assets.AssetPickerWindow;
+import sx.richard.entity.editor.assets.AssetType;
+import sx.richard.entity.editor.window.Window;
 import sx.richard.eventbus.EventBus;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
-public class Editor extends ApplicationAdapter implements RunGameListener {
+public class Editor extends ApplicationAdapter {
 	
 	public static EventBus events;
+	
+	private static int width, height;
+	
+	private static final Array<Window> windows = new Array<Window>();
 	
 	static {
 		events = new EventBus();
 	}
 	
-	public static void main (String[] args) {
-		new LwjglApplication(new Editor(), "Test", 1280, 720, true);
+	/** Clears a {@link Window} */
+	public static void clear () {
+		Gdx.app.postRunnable(new Runnable() {
+			
+			@Override
+			public void run () {
+				windows.clear();
+			}
+		});
 	}
 	
-	SpriteBatch batch;
-	OrthographicCamera camera;
-	ComponentList componentList;
-	Engine engine;
-	EntityList entityList;
-	boolean paused;
-	boolean playing;
-	Table root;
-	SaveState saveState;
-	ShapeRenderer shapes;
-	Stage stage;
-	boolean step;
-	World world;
-	WorldEditor worldEditor;
+	public static void main (String[] args) {
+		new LwjglApplication(new Editor(), "Editor", 1280, 720, true);
+	}
+	
+	public static void pop () {
+		Gdx.app.postRunnable(new Runnable() {
+			
+			@Override
+			public void run () {
+				Window window = windows.get(windows.size - 1);
+				window.destroy();
+				windows.removeValue(window, true);
+				updateInput();
+			}
+		});
+	}
+	
+	public static void pop (final Window window) {
+		Gdx.app.postRunnable(new Runnable() {
+			
+			@Override
+			public void run () {
+				window.destroy();
+				windows.removeValue(window, true);
+				updateInput();
+			}
+		});
+	}
+	
+	/** Pushes a new {@link Window}
+	 * @param window */
+	public static void push (final Window window) {
+		Gdx.app.postRunnable(new Runnable() {
+			
+			@Override
+			public void run () {
+				windows.add(window);
+				window.create();
+				window.resize(width, height);
+				updateInput();
+			}
+		});
+	}
+	
+	private static void updateInput () {
+		Gdx.input.setInputProcessor(windows.get(windows.size - 1).getInputProcessor());
+	}
 	
 	@Override
 	public void create () {
-		
-		Assets.load();
-		
-		engine = new Engine();
-		
-		Array<EngineTask> engineTasks = new Array<EngineTask>();
-		engineTasks.add(new ClearColor());
-		engineTasks.add(new SortUpdateLayer());
-		engineTasks.add(new UpdateScene());
-		engineTasks.add(new SortRenderLayer());
-		engineTasks.add(new RenderScene());
-		engineTasks.add(new RenderDebugScene());
-		engine.setEngineTasks(engineTasks);
-		
-		world = new World();
-		
-		Scene2 scene = new Scene2();
-		engine.setScene(scene);
-		scene.setWorld(world);
-		
-		Entity camera = new Entity("camera");
-		Camera2 camera2 = new Camera2();
-		camera.add(camera2);
-		world.add(camera);
-		scene.setCamera(camera2);
-		
-		Entity arrow = new Entity("arrow");
-		Asset asset = new Asset("arrow.png", Texture.class);
-		arrow.add(new DrawTexture(asset));
-		arrow.add(new Spin());
-		world.add(arrow);
-		
-		// validate the entities
-		Array<Entity> invalidEntities = world.getInvalidEntities();
-		if (invalidEntities.size > 0) {
-			System.out.println("invalid entites! size=" + invalidEntities.size);
-			for (Entity entity : invalidEntities) {
-				System.out.println("\tinvalid entity=" + entity);
-			}
-		}
-		
-		worldEditor = new WorldEditor(world);
-		
-		stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-		
-		this.camera = (OrthographicCamera)stage.getCamera();
-		
-		batch = new SpriteBatch();
-		batch.setProjectionMatrix(this.camera.combined);
-		
-		shapes = new ShapeRenderer();
-		shapes.setProjectionMatrix(this.camera.combined);
-		
-		root = new Table();
-		stage.addActor(root);
-		
-		final GamePreview www = new GamePreview(world);
-		
-		root.add(new Table() {
-			
-			{
-				add(new PlayButtons(Editor.this)).expand().left();
-			}
-		}).expandX().fill().padLeft(5).pad(5, 5, 0, 0);
-		
-		root.row();
-		
-		root.add(new Table() {
-			
-			{
-				
-				add(new Table() {
-					
-					{
-						add(worldEditor).expand().fill().space(5);
-						row();
-						add(www).expand().fill().space(5);
-					}
-				}).expand().fill().padLeft(5).padTop(5).padBottom(5).space(5);
-				
-				add(new Table() {
-					
-					{
-						add(entityList = new EntityList(world)).expand().fill();
-					}
-				}).width(180).fill().expandY().padTop(5).space(5).padBottom(5);
-				
-				add(new Table() {
-					
-					{
-						add(componentList = new ComponentList()).expand().fill();
-					}
-				}).width(300).fill().expandY().padTop(5).space(5).padRight(5).padBottom(5);
-			}
-		}).expand().fill();
-		
-		Gdx.input.setInputProcessor(stage);
-		
-	}
-	
-	@Override
-	public void pause () {
-		paused = true;
-	}
-	
-	@Override
-	public void play () {
-		playing = true;
-		step = false;
-		paused = false;
-		saveState = new SaveState(world);
-		saveState.save();
+		push(new MainWindow());
+		push(new AssetPickerWindow(AssetType.TEXTURE, null));
 	}
 	
 	@Override
 	public void render () {
-		Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1);
-		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		update();
-		stage.act();
-		stage.draw();
-	}
-	
-	@Override
-	public void resize (int w, int h) {
-		stage.setViewport(w, h, false);
-		root.setSize(w, h);
-		root.invalidate();
-		camera.viewportWidth = w;
-		camera.viewportHeight = h;
-		camera.update();
-	}
-	
-	@Override
-	public void step () {
-		step = true;
-	}
-	
-	@Override
-	public void stop () {
-		saveState.restore();
-		playing = false;
-		entityList.refresh();
-	}
-	
-	@Override
-	public void unpause () {
-		paused = false;
-	}
-	
-	private void update () {
-		if (playing) {
-			if (!paused) {
-				EntityUtils.updateGroup(world, Gdx.graphics.getDeltaTime());
-			} else if (step) {
-				EntityUtils.updateGroup(world, 1f / 60f);
-			}
-			step = false;
+		float delta = Gdx.graphics.getDeltaTime();
+		for (Window window : windows) {
+			window.update(delta);
+		}
+		for (Window window : windows) {
+			window.render();
 		}
 	}
+	
+	@Override
+	public void resize (int width, int height) {
+		Editor.width = width;
+		Editor.height = height;
+		for (Window window : windows) {
+			window.resize(width, height);
+		}
+	}
+	
 }
