@@ -31,11 +31,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 public class Editor extends ApplicationAdapter {
@@ -128,70 +125,9 @@ public class Editor extends ApplicationAdapter {
 		root.add(new Table() {
 			
 			{
-				defaults().space(5);
-				add(new TextButton("Play", Assets.skin) {
-					
-					{
-						addListener(new ClickListener() {
-							
-							@Override
-							public void clicked (InputEvent event, float x, float y) {
-								start();
-							}
-						});
-					}
-				});
-				add(new TextButton("Pause", Assets.skin) {
-					
-					{
-						addListener(new ClickListener() {
-							
-							@Override
-							public void clicked (InputEvent event, float x, float y) {
-								freeze();
-							}
-						});
-					}
-				});
-				add(new TextButton("Unpause", Assets.skin) {
-					
-					{
-						addListener(new ClickListener() {
-							
-							@Override
-							public void clicked (InputEvent event, float x, float y) {
-								unfreeze();
-							}
-						});
-					}
-				});
-				add(new TextButton("Step", Assets.skin) {
-					
-					{
-						addListener(new ClickListener() {
-							
-							@Override
-							public void clicked (InputEvent event, float x, float y) {
-								step();
-							}
-						});
-					}
-				});
-				add(new TextButton("Stop", Assets.skin) {
-					
-					{
-						addListener(new ClickListener() {
-							
-							@Override
-							public void clicked (InputEvent event, float x, float y) {
-								stop();
-							}
-						});
-					}
-				});
-				add().expand();
+				add(new PlayButtons()).expand().left();
 			}
-		}).expandX().height(50).fill().padLeft(5);
+		}).expandX().fill().padLeft(5).pad(5, 5, 0, 0);
 		
 		root.row();
 		

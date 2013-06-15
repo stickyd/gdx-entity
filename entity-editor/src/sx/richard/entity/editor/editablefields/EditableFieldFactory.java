@@ -5,6 +5,7 @@ import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.EditableField;
 import sx.richard.entity.editor.EditableUtils;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -47,6 +48,7 @@ public abstract class EditableFieldFactory<T> {
 	
 	private static void registerDefaults () {
 		register("float", new FloatField());
+		register(Vector2.class.getName(), new Vector2Field());
 	}
 	
 	/** @param field the {@link EditableFieldFactory}

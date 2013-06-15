@@ -15,10 +15,15 @@ public class EditableField {
 	/** @param editable the {@link Editable}
 	 * @param field the {@link Field} */
 	public EditableField (Editable editable, Field field) {
-		if (editable == null || field == null)
-			throw new NullPointerException("Editable and Field must not be null");
+		if (field == null)
+			throw new NullPointerException("Field must not be null");
 		this.editable = editable;
 		this.field = field;
+	}
+	
+	/** @param field the {@link Field} */
+	public EditableField (Field field) {
+		this(null, field);
 	}
 	
 	@Override

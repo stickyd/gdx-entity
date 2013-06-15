@@ -45,6 +45,23 @@ public class DebugGrid extends ComponentAdapter<DebugGrid> {
 			for (int y = -size * count; y < size * 64; y += size) {
 				render.shapes.line(-size * count, y, size * count, y);
 			}
+			render.shapes.setColor(0.25f, 0.25f, 0.25f, 1f);
+			int idx = 0;
+			for (int x = -size * count; x < size * count; x += size) {
+				if (idx % 4 == 0) {
+					render.shapes.line(x, -size * count, x, size * count);
+				}
+				idx++;
+			}
+			for (int y = -size * count; y < size * 64; y += size) {
+				if (idx % 4 == 0) {
+					render.shapes.line(-size * count, y, size * count, y);
+				}
+				idx++;
+			}
+			render.shapes.setColor(0.4f, 0.4f, 0.4f, 1f);
+			render.shapes.line(-size * count, 0, size * count, 0);
+			render.shapes.line(0, -size * count, 0, size * count);
 			render.shapes.end();
 			render.spriteBatch.begin();
 		}

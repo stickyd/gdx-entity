@@ -99,7 +99,7 @@ public abstract class WorldPanel extends Actor {
 		render.shapes.setProjectionMatrix(batch.getProjectionMatrix());
 		render.shapes.begin(ShapeType.Rectangle);
 		render.shapes.setColor(0.6f, 0.6f, 0.6f, 1f);
-		render.shapes.rect(getX() + 1, getY() + 1, width - 2, height - 2);
+		render.shapes.rect(getX(), getY(), width, height);
 		render.shapes.end();
 		batch.begin();
 	}

@@ -18,19 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  * @author Richard Taylor */
 public class FloatField extends EditableFieldFactory<Float> {
 	
-	private EditableField field;
-	private Object object;
-	
-	@Override
-	protected Actor create (final EditableField field, final Object object, final Float value) {
-		this.field = field;
-		this.object = object;
+	public static Actor floatField (final EditableField field, final Object object, final Float value) {
 		return new TextField("0", Assets.skin) {
 			
 			boolean editing;
 			TextFieldStyle style;
 			{
-				final TextField textField = this;
 				style = new TextFieldStyle(getStyle());
 				setStyle(style);
 				setText(value.toString());
@@ -97,12 +90,14 @@ public class FloatField extends EditableFieldFactory<Float> {
 				setText(text);
 				try {
 					Float value = Float.valueOf(text);
-					if (field.editable.min() != Float.MIN_VALUE) {
-						if (value < field.editable.min())
-							throw new IllegalArgumentException("Minimum value is " + Float.MIN_VALUE);
-					} else if (field.editable.max() != Float.MAX_VALUE) {
-						if (value > field.editable.max())
-							throw new IllegalArgumentException("Maximum value is " + Float.MAX_VALUE);
+					if (field.editable != null) {
+						if (field.editable.min() != Float.MIN_VALUE) {
+							if (value < field.editable.min())
+								throw new IllegalArgumentException("Minimum value is " + Float.MIN_VALUE);
+						} else if (field.editable.max() != Float.MAX_VALUE) {
+							if (value > field.editable.max())
+								throw new IllegalArgumentException("Maximum value is " + Float.MAX_VALUE);
+						}
 					}
 					EditorActions.run(new SetValue(field.field, object, value));
 					style.fontColor.set(Color.WHITE);
@@ -111,6 +106,11 @@ public class FloatField extends EditableFieldFactory<Float> {
 				}
 			}
 		};
+	}
+	
+	@Override
+	protected Actor create (final EditableField field, final Object object, final Float value) {
+		return floatField(field, object, value);
 	}
 	
 }
