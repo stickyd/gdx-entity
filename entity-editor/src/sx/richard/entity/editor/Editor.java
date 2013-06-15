@@ -9,6 +9,7 @@ import sx.richard.entity.Scene2;
 import sx.richard.entity.World;
 import sx.richard.entity.components.graphics.camera.Camera2;
 import sx.richard.entity.components.graphics.gfx2.DrawTexture;
+import sx.richard.entity.editor.PlayButtons.RunGameListener;
 import sx.richard.entity.editor.panel.ComponentList;
 import sx.richard.entity.editor.panel.EntityList;
 import sx.richard.entity.editor.panel.GamePreview;
@@ -35,7 +36,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
-public class Editor extends ApplicationAdapter {
+public class Editor extends ApplicationAdapter implements RunGameListener {
 	
 	public static EventBus events;
 	
@@ -125,7 +126,7 @@ public class Editor extends ApplicationAdapter {
 		root.add(new Table() {
 			
 			{
-				add(new PlayButtons()).expand().left();
+				add(new PlayButtons(Editor.this)).expand().left();
 			}
 		}).expandX().fill().padLeft(5).pad(5, 5, 0, 0);
 		
@@ -165,6 +166,20 @@ public class Editor extends ApplicationAdapter {
 	}
 	
 	@Override
+	public void pause () {
+		paused = true;
+	}
+	
+	@Override
+	public void play () {
+		playing = true;
+		step = false;
+		paused = false;
+		saveState = new SaveState(world);
+		saveState.save();
+	}
+	
+	@Override
 	public void render () {
 		Gdx.gl20.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -183,29 +198,20 @@ public class Editor extends ApplicationAdapter {
 		camera.update();
 	}
 	
-	private void freeze () {
-		paused = true;
-	}
-	
-	private void start () {
-		playing = true;
-		step = false;
-		paused = false;
-		saveState = new SaveState(world);
-		saveState.save();
-	}
-	
-	private void step () {
+	@Override
+	public void step () {
 		step = true;
 	}
 	
-	private void stop () {
+	@Override
+	public void stop () {
 		saveState.restore();
 		playing = false;
 		entityList.refresh();
 	}
 	
-	private void unfreeze () {
+	@Override
+	public void unpause () {
 		paused = false;
 	}
 	
