@@ -47,6 +47,11 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 		previews.clear();
 	}
 	
+	/** @return the current path */
+	public FileHandle getPath () {
+		return path;
+	}
+	
 	/** Selects a particular file, if it exists in the current list
 	 * @param file the {@link FileHandle} to the file */
 	public void select (FileHandle file) {

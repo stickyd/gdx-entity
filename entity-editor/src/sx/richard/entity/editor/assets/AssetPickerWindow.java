@@ -16,6 +16,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -43,6 +44,7 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 	private final AssetPickerListener listener;
 	private final FileHandle rootFile;
 	private FileHandle selected;
+	private Label selectedLabel;
 	private final AssetType type;
 	
 	public AssetPickerWindow (AssetType type, FileHandle selected, AssetPickerListener listener) {
@@ -59,8 +61,11 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 	}
 	
 	@Override
-	public void directorySelected (FileHandle directory) {
+	public void directorySelected (FileHandle directory, boolean clicked) {
 		list.setPath(directory);
+		if (clicked) {
+			selected(null);
+		}
 	}
 	
 	@Override
@@ -86,13 +91,14 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 	@Override
 	public void onCreate () {
 		list = new AssetGrid(type, this);
+		selectedLabel = new Label("", Assets.skin);
 		root.setBackground(Assets.skin.newDrawable("white", new Color(0.1f, 0.1f, 0.1f, 1f)));
 		root.add(new Table() {
 			
 			{
 				add(new DirectoryTree(rootFile, selected != null ? selected.parent() : null, AssetPickerWindow.this)).expand().fill();
 			}
-		}).width(400).expandY().fill().padLeft(5).padTop(5).space(5);
+		}).width(400).expandY().fill().padLeft(5).padTop(5).padRight(5);
 		root.add(new Table() {
 			
 			{
@@ -103,11 +109,22 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 		root.add(new Table() {
 			
 			{
-				defaults().fill().uniform();
-				add(cancel = new TextButton("Cancel", Assets.skin));
-				add(ok = new TextButton("Ok", Assets.skin));
+				add(new Table() {
+					
+					{
+						add(selectedLabel).expand().left();
+						add(new Table() {
+							
+							{
+								defaults().fill().uniform();
+								add(cancel = new TextButton("Cancel", Assets.skin));
+								add(ok = new TextButton("Ok", Assets.skin));
+							}
+						}).expandY().right().fillY();
+					}
+				}).expand().fill();
 			}
-		}).expandX().right().colspan(2).pad(5);
+		}).expandX().fill().colspan(2).pad(5);
 		list.setPath(rootFile);
 		cancel.addListener(new ClickListener() {
 			
@@ -136,6 +153,7 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 	@Override
 	public void selected (FileHandle fileHandle) {
 		selected = fileHandle;
+		selectedLabel.setText(fileHandle != null ? fileHandle.path() : "");
 		update();
 	}
 	

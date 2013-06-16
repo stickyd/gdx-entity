@@ -23,8 +23,9 @@ public class DirectoryTree extends Table {
 	public interface DirectoryTreeListener {
 		
 		/** Invoked when a directory is selected
-		 * @param directory the {@link FileHandle} of the directory */
-		public void directorySelected (FileHandle directory);
+		 * @param directory the {@link FileHandle} of the directory
+		 * @param clicked whether this was done by the user */
+		public void directorySelected (FileHandle directory, boolean clicked);
 		
 	}
 	
@@ -60,7 +61,7 @@ public class DirectoryTree extends Table {
 				Node node = tree.getSelection().first();
 				if (node != null) {
 					FileHandle file = (FileHandle)node.getObject();
-					listener.directorySelected(file);
+					listener.directorySelected(file, true);
 				}
 			}
 		});
@@ -91,7 +92,7 @@ public class DirectoryTree extends Table {
 			if (node != null) {
 				node.setExpanded(true);
 				tree.setSelection(node);
-				listener.directorySelected(selected);
+				listener.directorySelected(selected, false);
 			}
 		}
 	}
