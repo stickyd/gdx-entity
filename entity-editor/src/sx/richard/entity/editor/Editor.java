@@ -1,6 +1,7 @@
 
 package sx.richard.entity.editor;
 
+import sx.richard.entity.editor.project.Project;
 import sx.richard.entity.editor.window.Window;
 import sx.richard.eventbus.EventBus;
 
@@ -82,7 +83,9 @@ public class Editor extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
-		push(new MainWindow());
+		Project project = new Project();
+		project.setPath("C:/Users/Richard/Desktop/demoproject");
+		push(new MainEditor(project));
 	}
 	
 	@Override

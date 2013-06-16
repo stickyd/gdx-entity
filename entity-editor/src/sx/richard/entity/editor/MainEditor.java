@@ -14,6 +14,7 @@ import sx.richard.entity.editor.panel.ComponentList;
 import sx.richard.entity.editor.panel.EntityList;
 import sx.richard.entity.editor.panel.GamePreview;
 import sx.richard.entity.editor.panel.WorldEditor;
+import sx.richard.entity.editor.project.Project;
 import sx.richard.entity.editor.test.Spin;
 import sx.richard.entity.editor.window.Window;
 import sx.richard.entity.enginetasks.ClearColor;
@@ -35,8 +36,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
-public class MainWindow implements Window, RunGameListener {
+public class MainEditor implements Window, RunGameListener {
 	
+	public static Project project;
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	ComponentList componentList;
@@ -51,6 +53,15 @@ public class MainWindow implements Window, RunGameListener {
 	boolean step;
 	World world;
 	WorldEditor worldEditor;
+	
+	/** @param project the {@link Project} */
+	public MainEditor (Project project) {
+		if (project == null)
+			throw new NullPointerException("Project must not be null");
+		if (MainEditor.project != null)
+			throw new IllegalStateException("Project already exists");
+		MainEditor.project = project;
+	}
 	
 	@Override
 	public void create () {
@@ -115,7 +126,7 @@ public class MainWindow implements Window, RunGameListener {
 		root.add(new Table() {
 			
 			{
-				add(new PlayButtons(MainWindow.this)).expand().left();
+				add(new PlayButtons(MainEditor.this)).expand().left();
 			}
 		}).expandX().fill().padLeft(5).pad(5, 5, 0, 0);
 		
@@ -152,7 +163,9 @@ public class MainWindow implements Window, RunGameListener {
 	}
 	
 	@Override
-	public void destroy () {}
+	public void destroy () {
+		project = null;
+	}
 	
 	@Override
 	public InputProcessor getInputProcessor () {

@@ -4,12 +4,12 @@ package sx.richard.entity.editor.assets;
 import sx.richard.entity.assets.AssetType;
 import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.Editor;
+import sx.richard.entity.editor.MainEditor;
 import sx.richard.entity.editor.assets.AssetGrid.AssetListListener;
 import sx.richard.entity.editor.ui.DirectoryTree;
 import sx.richard.entity.editor.ui.DirectoryTree.DirectoryTreeListener;
 import sx.richard.entity.editor.window.StageWindow;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
@@ -51,7 +51,7 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 		this.type = type;
 		this.selected = selected;
 		this.listener = listener;
-		rootFile = Gdx.files.absolute("C:/Users/Richard/Desktop/");
+		rootFile = MainEditor.project.getAssets();
 	}
 	
 	@Override
