@@ -9,6 +9,8 @@ import sx.richard.entity.editor.EditableUtils;
 import sx.richard.entity.editor.Editor;
 import sx.richard.entity.editor.editablefields.EditableFieldFactory;
 import sx.richard.entity.editor.events.EntitySelected;
+import sx.richard.entity.editor.ui.EditField;
+import sx.richard.entity.editor.ui.EditField.EditFieldListener;
 import sx.richard.eventbus.EventListener;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -42,6 +44,8 @@ public class ComponentList extends Table {
 		this.entity = entity;
 		clearComponents();
 		if (entity != null) {
+			components = new Table();
+			addHeader();
 			populateComponents();
 		}
 	}
@@ -82,6 +86,27 @@ public class ComponentList extends Table {
 		components.row();
 	}
 	
+	private void addHeader () {
+		components.add(new Table() {
+			
+			{
+				add(new EditField(Assets.skin, new EditFieldListener() {
+					
+					@Override
+					public void changed (String text) {
+						entity.setId(text);
+					}
+					
+					@Override
+					public String getValue () {
+						return entity != null ? entity.getId() : "---";
+					}
+				}));
+			}
+		});
+		components.row();
+	}
+	
 	private void clearComponents () {
 		if (components != null) {
 			clear();
@@ -100,7 +125,6 @@ public class ComponentList extends Table {
 	}
 	
 	private void populateComponents () {
-		components = new Table();
 		add(components);
 		for (Class<? extends Component<?>> componentType : entity.getComponents()) {
 			add(componentType);
