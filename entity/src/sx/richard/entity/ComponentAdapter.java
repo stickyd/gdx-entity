@@ -15,6 +15,9 @@ public abstract class ComponentAdapter<T extends Component<T>> extends Component
 	public void added () {}
 	
 	@Override
+	public void edited () {}
+	
+	@Override
 	public boolean isHidden () {
 		return false;
 	}

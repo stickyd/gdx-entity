@@ -1,6 +1,7 @@
 
 package sx.richard.entity.editor.assets;
 
+import sx.richard.entity.assets.AssetType;
 import sx.richard.entity.editor.assets.previews.AssetPreview;
 import sx.richard.entity.editor.assets.previews.AssetPreview.AssetPreviewListener;
 import sx.richard.entity.editor.assets.previews.TextureAssetPreview;
@@ -72,7 +73,6 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 	private AssetPreview createPreview (FileHandle file) {
 		switch (type) {
 			case FONT:
-			case JSON:
 			case TEXTURE:
 				return new TextureAssetPreview(this, file);
 			default:

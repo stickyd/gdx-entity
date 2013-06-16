@@ -1,8 +1,6 @@
 
 package sx.richard.entity.editor;
 
-import sx.richard.entity.editor.assets.AssetPickerWindow;
-import sx.richard.entity.editor.assets.AssetType;
 import sx.richard.entity.editor.window.Window;
 import sx.richard.eventbus.EventBus;
 
@@ -85,7 +83,6 @@ public class Editor extends ApplicationAdapter {
 	@Override
 	public void create () {
 		push(new MainWindow());
-		push(new AssetPickerWindow(AssetType.TEXTURE, null));
 	}
 	
 	@Override

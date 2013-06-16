@@ -1,7 +1,6 @@
 
 package sx.richard.entity.test;
 
-import sx.richard.entity.Asset;
 import sx.richard.entity.Component;
 import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.Engine;
@@ -9,6 +8,7 @@ import sx.richard.entity.EngineTask;
 import sx.richard.entity.Entity;
 import sx.richard.entity.Scene2;
 import sx.richard.entity.World;
+import sx.richard.entity.assets.Asset;
 import sx.richard.entity.components.Transform2;
 import sx.richard.entity.components.graphics.camera.Camera2;
 import sx.richard.entity.components.graphics.gfx2.DrawTexture;

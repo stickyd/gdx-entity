@@ -1,10 +1,9 @@
 
-package sx.richard.entity.editor.assets;
+package sx.richard.entity.assets;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.utils.ObjectMap;
 
 /** Defines the type of asset, for searching etc.
  * @author Richard Taylor */
@@ -12,10 +11,8 @@ public enum AssetType {
 	
 	/** A font */
 	FONT(BitmapFont.class, "fnt"),
-	/** A JSON file */
-	JSON(ObjectMap.class, "json"),
 	/** A texture */
-	TEXTURE(Texture.class, "png", "jpg", "jpeg", "cim", "etc1");
+	TEXTURE(Texture.class, "png", "jpg", "jpeg", "cim", "etc1"), ;
 	
 	/** @param type the type
 	 * @return the {@link AssetType} */
@@ -28,7 +25,6 @@ public enum AssetType {
 	}
 	
 	private final String[] extensions;
-	
 	private final Class<?> type;
 	
 	private AssetType (Class<?> type, String ... extensions) {

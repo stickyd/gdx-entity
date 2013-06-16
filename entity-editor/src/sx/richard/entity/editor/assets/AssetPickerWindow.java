@@ -1,6 +1,7 @@
 
 package sx.richard.entity.editor.assets;
 
+import sx.richard.entity.assets.AssetType;
 import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.Editor;
 import sx.richard.entity.editor.assets.AssetGrid.AssetListListener;

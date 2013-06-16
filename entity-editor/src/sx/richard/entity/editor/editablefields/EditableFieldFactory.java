@@ -1,9 +1,11 @@
 
 package sx.richard.entity.editor.editablefields;
 
+import sx.richard.entity.assets.Asset;
 import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.EditableField;
 import sx.richard.entity.editor.EditableUtils;
+import sx.richard.entity.editor.editablefields.fields.AssetField;
 import sx.richard.entity.editor.editablefields.fields.BooleanField;
 import sx.richard.entity.editor.editablefields.fields.ColorField;
 import sx.richard.entity.editor.editablefields.fields.FloatField;
@@ -58,6 +60,7 @@ public abstract class EditableFieldFactory<T> {
 		register(Boolean.class, new BooleanField());
 		register(Vector2.class, new Vector2Field());
 		register(Color.class, new ColorField());
+		register(Asset.class, new AssetField());
 	}
 	
 	/** @param field the {@link EditableFieldFactory}

@@ -1,11 +1,11 @@
 
 package sx.richard.entity.components.graphics.gfx2;
 
-import sx.richard.entity.Asset;
 import sx.richard.entity.Component;
 import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.Engine;
 import sx.richard.entity.Render;
+import sx.richard.entity.assets.Asset;
 import sx.richard.entity.components.Transform2;
 import sx.richard.entity.editor.Editable;
 
@@ -16,14 +16,14 @@ import com.badlogic.gdx.math.Vector2;
 
 public class DrawText extends ComponentAdapter<DrawText> {
 	
-	/** The {@link Asset} */
-	@Editable(type = BitmapFont.class)
-	private Asset asset;
-	/** The {@link BitmapFont} */
-	private BitmapFont bitmapFont;
 	/** The {@link Color} */
 	@Editable
 	public Color color;
+	/** The {@link Asset} */
+	@Editable
+	private Asset<BitmapFont> asset;
+	/** The {@link BitmapFont} */
+	private BitmapFont bitmapFont;
 	/** The text */
 	@Editable
 	private String text;
@@ -32,13 +32,13 @@ public class DrawText extends ComponentAdapter<DrawText> {
 	public DrawText () {}
 	
 	/** @param asset the {@link Asset} */
-	public DrawText (Asset asset) {
+	public DrawText (Asset<BitmapFont> asset) {
 		this(asset, null);
 	}
 	
 	/** @param asset the {@link Asset}
 	 * @param text the text */
-	public DrawText (Asset asset, String text) {
+	public DrawText (Asset<BitmapFont> asset, String text) {
 		this.asset = asset;
 		this.text = text;
 	}
@@ -53,7 +53,7 @@ public class DrawText extends ComponentAdapter<DrawText> {
 	}
 	
 	/** @return the {@link Asset} */
-	public Asset getAsset () {
+	public Asset<BitmapFont> getAsset () {
 		return asset;
 	}
 	
@@ -88,7 +88,7 @@ public class DrawText extends ComponentAdapter<DrawText> {
 	}
 	
 	/** @param asset the {@link Asset} */
-	public void setAsset (Asset asset) {
+	public void setAsset (Asset<BitmapFont> asset) {
 		if (this.asset != asset) {
 			Engine.getAssetManager().load(this.asset);
 			this.asset = asset;

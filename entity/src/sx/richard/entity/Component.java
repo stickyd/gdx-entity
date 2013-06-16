@@ -19,6 +19,9 @@ public abstract class Component<T extends Component<T>> implements Copyable<Comp
 	/** Added when this component is added to the world */
 	public abstract void added ();
 	
+	/** Invoked when the editor changes the values */
+	public abstract void edited ();
+	
 	/** @param componentClass the type of the component
 	 * @return another component from the {@link Entity} this is part of */
 	public final <K extends Component<K>> K get (Class<K> componentClass) {

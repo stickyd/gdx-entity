@@ -1,11 +1,11 @@
 
 package sx.richard.entity.components.graphics.gfx2;
 
-import sx.richard.entity.Asset;
 import sx.richard.entity.Component;
 import sx.richard.entity.ComponentAdapter;
 import sx.richard.entity.Engine;
 import sx.richard.entity.Render;
+import sx.richard.entity.assets.Asset;
 import sx.richard.entity.editor.Editable;
 
 import com.badlogic.gdx.graphics.Color;
@@ -17,8 +17,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
  * @author Richard Taylor */
 public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	
-	@Editable(type = { Texture.class, AtlasRegion.class })
-	private Asset asset;
 	/** The {@link Color}, will use whatever is set before if <code>null</code> */
 	@Editable
 	public Color color = null;
@@ -34,8 +32,6 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	/** The Y origin, as a multiple of the width */
 	@Editable
 	public float originY = 0.5f;
-	/** The {@link AtlasRegion} */
-	private AtlasRegion region;
 	/** The X scale */
 	@Editable
 	public float scaleX = 1f;
@@ -48,13 +44,17 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	/** The Y position offset, additional to the transform */
 	@Editable
 	public float y;
+	@Editable
+	private Asset<Texture> asset;
+	/** The {@link AtlasRegion} */
+	private transient AtlasRegion region;
 	
 	/** Constructor, no asset set */
 	public DrawTexture () {}
 	
 	/** Constructor, using an asset
 	 * @param asset the {@link Asset} */
-	public DrawTexture (Asset asset) {
+	public DrawTexture (Asset<Texture> asset) {
 		this.asset = asset;
 	}
 	
@@ -75,8 +75,13 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 		return component;
 	}
 	
+	@Override
+	public void edited () {
+		region = null;
+	}
+	
 	/** @return the {@link Asset} */
-	public Asset getAsset () {
+	public Asset<Texture> getAsset () {
 		return asset;
 	}
 	
@@ -88,13 +93,8 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	@Override
 	public void render (GL20 gl, Render render) {
 		if (region == null) {
-			if (asset.type == Texture.class) {
-				Texture texture = Engine.getAssetManager().forceLoad(asset);
-				region = new AtlasRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
-			} else if (asset.type == AtlasRegion.class) {
-				region = Engine.getAssetManager().forceLoad(asset);
-			} else
-				throw new RuntimeException("Incompatible asset, type=" + asset.type);
+			Texture texture = Engine.getAssetManager().forceLoad(asset);
+			region = new AtlasRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
 		}
 		if (region != null) {
 			int width = region.getRegionWidth();
@@ -113,12 +113,13 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	}
 	
 	/** @param asset the texture {@link Asset} */
-	public void setTextureAsset (Asset asset) {
+	public void setTextureAsset (Asset<Texture> asset) {
 		if (this.asset != asset) {
 			Engine.getAssetManager().unload(this.asset);
 			this.asset = asset;
 			region = null;
 			Engine.getAssetManager().load(asset);
+			edited();
 		}
 	}
 }

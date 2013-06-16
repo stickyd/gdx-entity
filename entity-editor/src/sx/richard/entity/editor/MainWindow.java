@@ -1,12 +1,12 @@
 
 package sx.richard.entity.editor;
 
-import sx.richard.entity.Asset;
 import sx.richard.entity.Engine;
 import sx.richard.entity.EngineTask;
 import sx.richard.entity.Entity;
 import sx.richard.entity.Scene2;
 import sx.richard.entity.World;
+import sx.richard.entity.assets.Asset;
 import sx.richard.entity.components.graphics.camera.Camera2;
 import sx.richard.entity.components.graphics.gfx2.DrawTexture;
 import sx.richard.entity.editor.PlayButtons.RunGameListener;
@@ -81,7 +81,7 @@ public class MainWindow implements Window, RunGameListener {
 		scene.setCamera(camera2);
 		
 		Entity arrow = new Entity("arrow");
-		Asset asset = new Asset("arrow.png", Texture.class);
+		Asset<Texture> asset = new Asset<Texture>("arrow.png", Texture.class);
 		arrow.add(new DrawTexture(asset));
 		arrow.add(new Spin());
 		world.add(arrow);

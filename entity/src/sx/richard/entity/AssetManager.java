@@ -1,6 +1,8 @@
 
 package sx.richard.entity;
 
+import sx.richard.entity.assets.Asset;
+
 /** Manages the assets
  * @author Richard Taylor */
 public class AssetManager {
@@ -18,7 +20,7 @@ public class AssetManager {
 	
 	/** Loads an asset, and waits until it's ready
 	 * @param asset the {@link Asset} */
-	public <T> T forceLoad (Asset asset) {
+	public <T> T forceLoad (Asset<?> asset) {
 		return forceLoad(asset.path, asset.type);
 	}
 	
@@ -40,7 +42,7 @@ public class AssetManager {
 	 * @return the asset that is loaded, <code>null</code> if it's not loaded */
 	// This warning is okay
 	@SuppressWarnings("unchecked")
-	public <T> T get (Asset asset) {
+	public <T> T get (Asset<?> asset) {
 		T object = null;
 		if (assetManager.isLoaded(asset.path)) {
 			object = (T)assetManager.get(asset.path);
@@ -64,7 +66,7 @@ public class AssetManager {
 	/** Loads an {@link Asset}
 	 * @param asset the {@link Asset} -- this may be <code>null</code>, it will
 	 *           be ignored */
-	public void load (Asset asset) {
+	public void load (Asset<?> asset) {
 		if (asset != null) {
 			load(asset.path, asset.type);
 		}
@@ -80,7 +82,7 @@ public class AssetManager {
 	/** Unloads an asset
 	 * @param asset the {@link Asset} -- this may be <code>null</code>, it will
 	 *           be ignored */
-	public void unload (Asset asset) {
+	public void unload (Asset<?> asset) {
 		if (asset != null) {
 			unload(asset.path);
 		}
