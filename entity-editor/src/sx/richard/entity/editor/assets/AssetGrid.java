@@ -8,8 +8,8 @@ import sx.richard.entity.editor.assets.previews.TextureAssetPreview;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /** Lists the assets for selection, callback with {@link AssetListListener}
  * @author Richard Taylor */
@@ -28,7 +28,7 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 	
 	private final AssetListListener listener;
 	private FileHandle path;
-	private final Array<AssetPreview> previews = new Array<AssetPreview>();
+	private final ObjectMap<String, AssetPreview> previews = new ObjectMap<String, AssetPreview>();
 	private AssetPreview selected;
 	private final AssetType type;
 	
@@ -41,10 +41,19 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 	
 	@Override
 	public void dispose () {
-		for (AssetPreview preview : previews) {
+		for (AssetPreview preview : previews.values()) {
 			preview.dispose();
 		}
 		previews.clear();
+	}
+	
+	/** Selects a particular file, if it exists in the current list
+	 * @param file the {@link FileHandle} to the file */
+	public void select (FileHandle file) {
+		AssetPreview preview = previews.get(file.path());
+		if (preview != null) {
+			preview.select(true);
+		}
 	}
 	
 	@Override
@@ -57,6 +66,8 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 		listener.selected(fileHandle);
 	}
 	
+	/** Sets the path, unselecting the current item
+	 * @param path the {@link FileHandle} to the directory */
 	public void setPath (FileHandle path) {
 		this.path = path;
 		update();
@@ -91,7 +102,7 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 				if (type.matching(file)) {
 					AssetPreview preview = createPreview(file);
 					add(preview);
-					previews.add(preview);
+					previews.put(file.path(), preview);
 				}
 			}
 			idx = idx + 1;

@@ -10,6 +10,9 @@ import sx.richard.entity.editor.ui.DirectoryTree.DirectoryTreeListener;
 import sx.richard.entity.editor.window.StageWindow;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -42,8 +45,9 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 	private FileHandle selected;
 	private final AssetType type;
 	
-	public AssetPickerWindow (AssetType type, AssetPickerListener listener) {
+	public AssetPickerWindow (AssetType type, FileHandle selected, AssetPickerListener listener) {
 		this.type = type;
+		this.selected = selected;
 		this.listener = listener;
 		rootFile = Gdx.files.absolute("C:/Users/Richard/Desktop/");
 	}
@@ -60,23 +64,39 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 	}
 	
 	@Override
+	public InputProcessor getInputProcessor () {
+		return new InputMultiplexer(super.getInputProcessor(), new InputAdapter() {
+			
+			@Override
+			public boolean keyTyped (char c) {
+				if (c == '\n' || c == '\r') {
+					ok();
+					return true;
+				}
+				return false;
+			}
+		});
+	}
+	
+	@Override
 	public int getPadding () {
 		return 50;
 	}
 	
 	@Override
 	public void onCreate () {
+		list = new AssetGrid(type, this);
 		root.setBackground(Assets.skin.newDrawable("white", new Color(0.1f, 0.1f, 0.1f, 1f)));
 		root.add(new Table() {
 			
 			{
-				add(new DirectoryTree(rootFile, rootFile, AssetPickerWindow.this)).expand().fill();
+				add(new DirectoryTree(rootFile, selected != null ? selected.parent() : null, AssetPickerWindow.this)).expand().fill();
 			}
 		}).width(400).expandY().fill().padLeft(5).padTop(5).space(5);
 		root.add(new Table() {
 			
 			{
-				add(new ScrollPane(list = new AssetGrid(type, AssetPickerWindow.this))).expand().fillX().top();
+				add(new ScrollPane(list)).expand().fillX().top();
 			}
 		}).expand().fill().padRight(5).padTop(5);
 		root.row();
@@ -103,14 +123,13 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 			
 			@Override
 			public void clicked (InputEvent e, float x, float y) {
-				if (!ok.isDisabled()) {
-					if (listener != null) {
-						listener.ok(selected);
-					}
-					Editor.pop(AssetPickerWindow.this);
-				}
+				ok();
 			}
 		});
+		if (selected != null) {
+			list.setPath(selected.parent());
+			list.select(selected);
+		}
 		update();
 	}
 	
@@ -118,6 +137,15 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 	public void selected (FileHandle fileHandle) {
 		selected = fileHandle;
 		update();
+	}
+	
+	private void ok () {
+		if (!ok.isDisabled()) {
+			if (listener != null) {
+				listener.ok(selected);
+			}
+			Editor.pop(AssetPickerWindow.this);
+		}
 	}
 	
 	private void update () {

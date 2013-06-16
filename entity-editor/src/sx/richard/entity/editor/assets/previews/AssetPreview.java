@@ -52,6 +52,11 @@ public abstract class AssetPreview extends Table implements Disposable {
 		});
 	}
 	
+	/** @return the {@link FileHandle} */
+	public FileHandle getFile () {
+		return fileHandle;
+	}
+	
 	@Override
 	public float getMinHeight () {
 		return 150;

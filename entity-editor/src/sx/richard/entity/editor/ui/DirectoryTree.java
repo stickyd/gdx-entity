@@ -44,12 +44,14 @@ public class DirectoryTree extends Table {
 		
 	}
 	
+	private final DirectoryTreeListener listener;
 	private final ObjectMap<String, DirectoryTreeNode> nodes = new ObjectMap<String, DirectoryTreeNode>();
 	private final FileHandle root;
 	private Tree tree;
 	
 	public DirectoryTree (FileHandle root, FileHandle selected, final DirectoryTreeListener listener) {
 		this.root = root;
+		this.listener = listener;
 		create(selected);
 		addListener(new ClickListener() {
 			
@@ -74,7 +76,7 @@ public class DirectoryTree extends Table {
 		}
 	}
 	
-	private void create (FileHandle selected) {
+	private void create (final FileHandle selected) {
 		setBackground(Assets.skin.newDrawable("white", new Color(0.15f, 0.15f, 0.15f, 1f)));
 		add(tree = new Tree(Assets.skin)).expand().fill();
 		for (FileHandle file : root.list()) {
@@ -84,10 +86,13 @@ public class DirectoryTree extends Table {
 				addChildren(node, file);
 			}
 		}
-		DirectoryTreeNode node = nodes.get(selected.path());
-		if (node != null) {
-			node.setExpanded(true);
-			tree.setSelection(node);
+		if (selected != null) {
+			DirectoryTreeNode node = nodes.get(selected.path());
+			if (node != null) {
+				node.setExpanded(true);
+				tree.setSelection(node);
+				listener.directorySelected(selected);
+			}
 		}
 	}
 	

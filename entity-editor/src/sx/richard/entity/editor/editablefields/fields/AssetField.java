@@ -15,6 +15,7 @@ import sx.richard.entity.editor.assets.AssetPickerWindow;
 import sx.richard.entity.editor.assets.AssetPickerWindow.AssetPickerListener;
 import sx.richard.entity.editor.editablefields.EditableFieldFactory;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -36,7 +37,8 @@ public class AssetField extends EditableFieldFactory<Asset<?>> {
 					public void clicked (InputEvent e, float x, float y) {
 						final Class<?> typeClass = (Class<?>)((ParameterizedType)field.field.getGenericType()).getActualTypeArguments()[0];
 						final AssetType type = AssetType.from(typeClass);
-						AssetPickerWindow window = new AssetPickerWindow(type, new AssetPickerListener() {
+						FileHandle file = Gdx.files.absolute("C:/Users/Richard/Desktop/demoproject/assets/textures/arrow.png");
+						AssetPickerWindow window = new AssetPickerWindow(type, file, new AssetPickerListener() {
 							
 							@Override
 							public void cancel () {}
