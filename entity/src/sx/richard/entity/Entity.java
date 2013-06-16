@@ -213,13 +213,20 @@ public final class Entity extends EntityGroup implements EntityListener {
 		listeners.remove(listener);
 	}
 	
-	/** @param id the Id */
-	public final void setId (String id) {
+	/** @param id the Id
+	 * @return whether this is valid */
+	public final boolean setId (String id) {
 		if (id == null)
 			throw new NullPointerException("Id must not be null");
 		String previousId = this.id;
 		this.id = id;
-		entityIdChanged(this, previousId);
+		try {
+			entityIdChanged(this, previousId);
+		} catch (Exception e) {
+			this.id = previousId;
+			return false;
+		}
+		return true;
 	}
 	
 	@Override

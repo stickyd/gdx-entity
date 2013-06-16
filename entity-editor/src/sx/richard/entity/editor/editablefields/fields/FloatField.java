@@ -30,10 +30,10 @@ public class FloatField extends EditableFieldFactory<Float> {
 				if (field.editable != null) {
 					if (field.editable.min() != Float.MIN_VALUE) {
 						if (value < field.editable.min())
-							throw new IllegalArgumentException("Minimum value is " + Float.MIN_VALUE);
+							throw new RuntimeException("Below minimum");
 					} else if (field.editable.max() != Float.MAX_VALUE) {
 						if (value > field.editable.max())
-							throw new IllegalArgumentException("Maximum value is " + Float.MAX_VALUE);
+							throw new RuntimeException("Above maximum");
 					}
 				}
 				EditorActions.run(new SetValue(field.field, object, value));

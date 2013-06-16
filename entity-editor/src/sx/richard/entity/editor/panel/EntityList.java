@@ -1,8 +1,10 @@
 
 package sx.richard.entity.editor.panel;
 
+import sx.richard.entity.Component;
 import sx.richard.entity.Entity;
 import sx.richard.entity.EntityGroup;
+import sx.richard.entity.EntityListener;
 import sx.richard.entity.World;
 import sx.richard.entity.editor.Assets;
 import sx.richard.entity.editor.Editor;
@@ -19,12 +21,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Tree.TreeStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /** Lists all the entities in the {@link World}, allows selection. When an entity
  * is selected, publishes the {@link EntitySelected}
  * @author Richard Taylor */
-public class EntityList extends Table {
+public class EntityList extends Table implements EntityListener {
 	
+	private final ObjectMap<Entity, Label> entities = new ObjectMap<Entity, Label>();
 	private String selectedId;
 	private Tree tree;
 	private final World world;
@@ -38,8 +42,23 @@ public class EntityList extends Table {
 		setBackground(new TextureRegionDrawable(new TextureRegion(new Texture("background.png"))));
 	}
 	
+	@Override
+	public void componentAdded (Entity entity, Component<?> component) {}
+	
+	@Override
+	public void componentRemoved (Entity entity, Component<?> component) {}
+	
+	@Override
+	public void entityIdChanged (Entity entity, String previousId) {
+		entities.get(entity).setText(entity.getId());
+	}
+	
 	/** Refreshes the item, attempting to re-select the same previously selected */
 	public void refresh () {
+		for (Entity entity : entities.keys()) {
+			entity.removeListener(this);
+		}
+		entities.clear();
 		clear();
 		createTree();
 		if (selectedId != null) {}
@@ -82,14 +101,17 @@ public class EntityList extends Table {
 		populateTree();
 	}
 	
-	private Actor entity (Entity entity) {
+	private Label entity (Entity entity) {
 		return new Label(entity.getId(), Assets.skin);
 	}
 	
 	private void populateTree () {
 		for (Entity entity : world.getEntities()) {
 			if (!entity.getId().startsWith("_")) {
-				Node node = new Node(entity(entity));
+				Label label = entity(entity);
+				entity.addListener(this);
+				entities.put(entity, label);
+				Node node = new Node(label);
 				node.setObject(entity);
 				tree.add(node);
 				populateTree(node, entity);

@@ -14,6 +14,55 @@ public class EditField extends TextField {
 	
 	/** Allows only decimals
 	 * @author Richard Taylor */
+	public static class AlphaNumericTextFieldFilter implements TextFieldFilter {
+		
+		@Override
+		public boolean acceptChar (TextField field, char c) {
+			switch (c) {
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+				case 'a':
+				case 'b':
+				case 'c':
+				case 'd':
+				case 'e':
+				case 'f':
+				case 'g':
+				case 'h':
+				case 'i':
+				case 'j':
+				case 'k':
+				case 'l':
+				case 'm':
+				case 'n':
+				case 'o':
+				case 'p':
+				case 'q':
+				case 'r':
+				case 's':
+				case 't':
+				case 'u':
+				case 'v':
+				case 'w':
+				case 'x':
+				case 'y':
+				case 'z':
+					return true;
+			}
+			return false;
+		}
+	}
+	
+	/** Allows only decimals
+	 * @author Richard Taylor */
 	public static class DecimalTextFieldFilter implements TextFieldFilter {
 		
 		@Override
@@ -102,7 +151,6 @@ public class EditField extends TextField {
 	
 	private void set () {
 		listener.changed(getText());
-		getStyle().fontColor.set(Color.WHITE);
 	}
 	
 }

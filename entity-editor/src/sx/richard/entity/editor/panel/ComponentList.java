@@ -10,6 +10,7 @@ import sx.richard.entity.editor.Editor;
 import sx.richard.entity.editor.editablefields.EditableFieldFactory;
 import sx.richard.entity.editor.events.EntitySelected;
 import sx.richard.entity.editor.ui.EditField;
+import sx.richard.entity.editor.ui.EditField.AlphaNumericTextFieldFilter;
 import sx.richard.entity.editor.ui.EditField.EditFieldListener;
 import sx.richard.eventbus.EventListener;
 
@@ -90,7 +91,7 @@ public class ComponentList extends Table {
 		components.add(new Table() {
 			
 			{
-				add(new EditField(Assets.skin, new EditFieldListener() {
+				final EditField field = new EditField(Assets.skin, new EditFieldListener() {
 					
 					@Override
 					public void changed (String text) {
@@ -101,9 +102,11 @@ public class ComponentList extends Table {
 					public String getValue () {
 						return entity != null ? entity.getId() : "---";
 					}
-				}));
+				});
+				field.setTextFieldFilter(new AlphaNumericTextFieldFilter());
+				add(field).expand().fill();
 			}
-		});
+		}).expandX().fill();
 		components.row();
 	}
 	
