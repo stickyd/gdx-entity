@@ -102,7 +102,12 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 		root.add(new Table() {
 			
 			{
-				add(new ScrollPane(list)).expand().fillX().top();
+				add(new ScrollPane(list) {
+					
+					{
+						setScrollingDisabled(true, false);
+					}
+				}).expand().fillX().top();
 			}
 		}).expand().fill().padRight(5).padTop(5);
 		root.row();
@@ -146,6 +151,8 @@ public class AssetPickerWindow extends StageWindow implements AssetListListener,
 		if (selected != null) {
 			list.setPath(selected.parent());
 			list.select(selected);
+		} else {
+			list.setPath(rootFile);
 		}
 		update();
 	}

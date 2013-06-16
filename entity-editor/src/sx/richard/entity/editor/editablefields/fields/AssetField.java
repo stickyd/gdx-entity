@@ -37,7 +37,8 @@ public class AssetField extends EditableFieldFactory<Asset<?>> {
 					public void clicked (InputEvent e, float x, float y) {
 						final Class<?> typeClass = (Class<?>)((ParameterizedType)field.field.getGenericType()).getActualTypeArguments()[0];
 						final AssetType type = AssetType.from(typeClass);
-						FileHandle file = Gdx.files.absolute("C:/Users/Richard/Desktop/demoproject/assets/textures/arrow.png");
+						final Asset<?> existing = (Asset<?>)EditableUtils.get(field.field, object);
+						FileHandle file = existing == null ? null : Gdx.files.absolute(existing.path);
 						AssetPickerWindow window = new AssetPickerWindow(type, file, new AssetPickerListener() {
 							
 							@Override
@@ -46,7 +47,6 @@ public class AssetField extends EditableFieldFactory<Asset<?>> {
 							@SuppressWarnings({ "unchecked", "rawtypes" })
 							@Override
 							public void ok (FileHandle file) {
-								Asset<?> existing = (Asset<?>)EditableUtils.get(field.field, object);
 								EditableUtils.set(field.field, object, new Asset(file != null ? file.path() : null, typeClass));
 								setText(file != null ? file.nameWithoutExtension() : "[none]");
 								if (object instanceof Component) {

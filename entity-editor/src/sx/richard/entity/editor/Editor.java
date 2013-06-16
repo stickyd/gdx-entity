@@ -84,7 +84,7 @@ public class Editor extends ApplicationAdapter {
 	@Override
 	public void create () {
 		Project project = new Project();
-		project.setPath("C:/Users/Richard/Desktop/demoproject");
+		project.setPath("C:/work/work/projects/gdx-entity/test/whack");
 		push(new MainEditor(project));
 	}
 	

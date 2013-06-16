@@ -6,7 +6,6 @@ import sx.richard.entity.EngineTask;
 import sx.richard.entity.Entity;
 import sx.richard.entity.Scene2;
 import sx.richard.entity.World;
-import sx.richard.entity.assets.Asset;
 import sx.richard.entity.components.graphics.camera.Camera2;
 import sx.richard.entity.components.graphics.gfx2.DrawTexture;
 import sx.richard.entity.editor.PlayButtons.RunGameListener;
@@ -29,7 +28,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -92,8 +90,7 @@ public class MainEditor implements Window, RunGameListener {
 		scene.setCamera(camera2);
 		
 		Entity arrow = new Entity("arrow");
-		Asset<Texture> asset = new Asset<Texture>("arrow.png", Texture.class);
-		arrow.add(new DrawTexture(asset));
+		arrow.add(new DrawTexture());
 		arrow.add(new Spin());
 		world.add(arrow);
 		

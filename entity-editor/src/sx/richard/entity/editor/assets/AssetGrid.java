@@ -117,7 +117,7 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 			}
 			count++;
 		}
-		for (int i = count; i <= columns; i++) {
+		for (int i = count; i < columns; i++) {
 			add();
 		}
 	}

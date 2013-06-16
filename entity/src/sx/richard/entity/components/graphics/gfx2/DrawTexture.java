@@ -100,7 +100,7 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	
 	@Override
 	public void render (GL20 gl, Render render) {
-		if (region == null) {
+		if (asset != null && region == null) {
 			Texture texture = Engine.getAssetManager().forceLoad(asset);
 			region = new AtlasRegion(texture, 0, 0, texture.getWidth(), texture.getHeight());
 		}
