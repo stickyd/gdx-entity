@@ -91,6 +91,14 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	}
 	
 	@Override
+	public void removed () {
+		if (region != null) {
+			Engine.getAssetManager().unload(asset);
+			region = null;
+		}
+	}
+	
+	@Override
 	public void render (GL20 gl, Render render) {
 		if (region == null) {
 			Texture texture = Engine.getAssetManager().forceLoad(asset);
@@ -115,10 +123,8 @@ public class DrawTexture extends ComponentAdapter<DrawTexture> {
 	/** @param asset the texture {@link Asset} */
 	public void setTextureAsset (Asset<Texture> asset) {
 		if (this.asset != asset) {
-			Engine.getAssetManager().unload(this.asset);
 			this.asset = asset;
 			region = null;
-			Engine.getAssetManager().load(asset);
 			edited();
 		}
 	}

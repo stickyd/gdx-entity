@@ -1,6 +1,7 @@
 
 package sx.richard.entity.editor;
 
+import sx.richard.entity.Component;
 import sx.richard.entity.Entity;
 import sx.richard.entity.World;
 
@@ -33,7 +34,11 @@ public class SaveState {
 	/** Saves the state */
 	public void save () {
 		for (Entity entity : world.getEntities()) {
-			entities.add(new Entity(entity.getId(), entity));
+			Entity newEntity = new Entity(entity.getId(), entity);
+			entities.add(newEntity);
+			for (Class<? extends Component<?>> componentType : newEntity.getComponents()) {
+				newEntity.get(componentType).edited();
+			}
 		}
 	}
 	

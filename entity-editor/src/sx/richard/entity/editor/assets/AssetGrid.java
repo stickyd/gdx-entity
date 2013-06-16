@@ -82,13 +82,15 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 	
 	private void update () {
 		clear();
+		defaults().expandX().fill().uniform().height(150).space(5);
 		int columns = 3;
 		int idx = 0;
+		int count = 0;
 		for (FileHandle file : path.list()) {
 			if (!file.isDirectory()) {
 				if (type.matching(file)) {
 					AssetPreview preview = createPreview(file);
-					add(preview).expand().fill().uniform().space(5);
+					add(preview);
 					previews.add(preview);
 				}
 			}
@@ -97,6 +99,10 @@ public class AssetGrid extends Table implements Disposable, AssetPreviewListener
 				idx = 0;
 				row();
 			}
+			count++;
+		}
+		for (int i = count; i <= columns; i++) {
+			add();
 		}
 	}
 	

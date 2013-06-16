@@ -13,12 +13,14 @@ public abstract class StageWindow implements Window {
 	
 	protected Table root;
 	protected Stage stage;
+	private Table superRoot;
 	
 	@Override
 	public void create () {
 		stage = new Stage();
-		stage.addActor(root = new Table());
-		root.setBackground(Assets.skin.newDrawable("white", Window.FADE));
+		stage.addActor(superRoot = new Table());
+		superRoot.add(root = new Table()).pad(getPadding()).expand().fill();
+		superRoot.setBackground(Assets.skin.newDrawable("white", Window.FADE));
 		onCreate();
 	}
 	
@@ -32,6 +34,9 @@ public abstract class StageWindow implements Window {
 		return stage;
 	}
 	
+	/** @return the padding for the window */
+	public abstract int getPadding ();
+	
 	public abstract void onCreate ();
 	
 	@Override
@@ -42,8 +47,8 @@ public abstract class StageWindow implements Window {
 	@Override
 	public void resize (int width, int height) {
 		stage.setViewport(width, height, false);
-		root.setSize(width, height);
-		root.invalidateHierarchy();
+		superRoot.setSize(width, height);
+		superRoot.invalidateHierarchy();
 	}
 	
 	@Override
