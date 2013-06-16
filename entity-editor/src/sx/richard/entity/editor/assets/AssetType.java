@@ -2,21 +2,37 @@
 package sx.richard.entity.editor.assets;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.utils.ObjectMap;
 
 /** Defines the type of asset, for searching etc.
  * @author Richard Taylor */
 public enum AssetType {
 	
 	/** A font */
-	FONT("fnt"),
+	FONT(BitmapFont.class, "fnt"),
 	/** A JSON file */
-	JSON("json"),
+	JSON(ObjectMap.class, "json"),
 	/** A texture */
-	TEXTURE("png", "jpg", "jpeg", "cim", "etc1");
+	TEXTURE(Texture.class, "png", "jpg", "jpeg", "cim", "etc1");
+	
+	/** @param type the type
+	 * @return the {@link AssetType} */
+	public static AssetType from (Class<?> type) {
+		for (AssetType assetType : values()) {
+			if (assetType.type == type)
+				return assetType;
+		}
+		return null;
+	}
 	
 	private final String[] extensions;
 	
-	private AssetType (String ... extensions) {
+	private final Class<?> type;
+	
+	private AssetType (Class<?> type, String ... extensions) {
+		this.type = type;
 		this.extensions = extensions;
 	}
 	
