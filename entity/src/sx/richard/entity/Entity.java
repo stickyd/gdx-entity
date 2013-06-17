@@ -221,6 +221,8 @@ public final class Entity extends EntityGroup implements EntityListener {
 		String previousId = this.id;
 		this.id = id;
 		try {
+			if (id.trim().length() == 0)
+				throw new RuntimeException("Id must not be empty");
 			entityIdChanged(this, previousId);
 		} catch (Exception e) {
 			this.id = previousId;

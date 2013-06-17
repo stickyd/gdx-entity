@@ -17,6 +17,10 @@ public class Project {
 		return assets;
 	}
 	
+	public FileHandle getBin () {
+		return Gdx.files.absolute(path + "/bin");
+	}
+	
 	/** @return the {@link FileHandle} to the root of the project */
 	public FileHandle getFile () {
 		return Gdx.files.absolute(path);
