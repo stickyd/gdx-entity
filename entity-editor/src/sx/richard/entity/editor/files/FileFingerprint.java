@@ -74,8 +74,11 @@ public class FileFingerprint {
 	 * @param file the {@link File}
 	 * @return whether the file is the same, <code>false</code> if it changes */
 	public boolean matches (File file) throws IOException {
-		FileFingerprint fingerprint = new FileFingerprint(file);
-		return fingerprint.equals(file);
+		if (file.exists()) {
+			FileFingerprint fingerprint = new FileFingerprint(file);
+			return fingerprint.equals(this);
+		} else
+			return false;
 	}
 	
 }
